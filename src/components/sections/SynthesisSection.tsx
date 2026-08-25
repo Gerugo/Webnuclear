@@ -83,9 +83,10 @@ export const SynthesisSection: React.FC = () => {
       status: 'EN RUTA',
       destination: 'Hospital Universitario // PET-CT',
       eta: '18 min estimados',
-      color: 'text-neon-cyan',
-      badgeBg: 'bg-cyan-500/10 text-cyan-300 border-cyan-400/20',
+      color: 'text-teal-600',
+      badgeBg: 'bg-teal-50 text-teal-700 border-teal-200',
       progressVal: f18Activity,
+      gradient: 'from-teal-500 to-teal-600',
     },
     {
       code: '⁶⁸Ga',
@@ -95,9 +96,10 @@ export const SynthesisSection: React.FC = () => {
       status: 'CALIBRACIÓN',
       destination: 'Instituto Oncológico // PET-MR',
       eta: '09 min estimados',
-      color: 'text-neon-emerald',
-      badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-400/20',
+      color: 'text-emerald-600',
+      badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       progressVal: ga68Activity,
+      gradient: 'from-emerald-500 to-emerald-600',
     },
     {
       code: '¹⁷⁷Lu',
@@ -107,9 +109,10 @@ export const SynthesisSection: React.FC = () => {
       status: 'PROGRAMADO',
       destination: 'Servicio de Medicina Nuclear',
       eta: 'Inyección en Turno',
-      color: 'text-neon-cobalt',
-      badgeBg: 'bg-blue-500/10 text-blue-300 border-blue-400/20',
+      color: 'text-blue-600',
+      badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
       progressVal: lu177Activity,
+      gradient: 'from-blue-500 to-blue-600',
     },
   ];
 
@@ -123,90 +126,90 @@ export const SynthesisSection: React.FC = () => {
         
         {/* Encabezado de Sección */}
         <div className="logistics-header mb-12">
-          <div className="flex items-center space-x-2 text-neon-emerald font-mono text-xs mb-3">
-            <span className="px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] text-neon-emerald tracking-wider">
+          <div className="flex items-center space-x-2 text-emerald-700 font-mono text-xs mb-3">
+            <span className="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 font-bold tracking-wider">
               02 // LOGÍSTICA HOSPITALARIA
             </span>
-            <span className="text-clinical-muted">•</span>
-            <span className="text-clinical-dim">CADENA DE SUMINISTRO JUST-IN-TIME</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500">CADENA JUST-IN-TIME</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
-              <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
-                Logística y <span className="text-neon-emerald">Vida Media</span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-slate-900 tracking-tight">
+                Logística y <span className="text-emerald-600">Vida Media</span>
               </h2>
-              <p className="text-clinical-dim text-base sm:text-lg mt-3 font-body max-w-2xl leading-relaxed">
+              <p className="text-slate-600 text-base sm:text-lg mt-3 font-body max-w-2xl leading-relaxed">
                 Los radiofármacos de vida media corta exigen una sincronización milimétrica. Nuestro sistema coordina la producción en ciclotrón con la hora programada de administración a cada paciente.
               </p>
             </div>
 
             {/* Módulo de Telemetría Hospitalaria */}
             <div className="lg:col-span-4 flex justify-start lg:justify-end">
-              <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] p-5 rounded-2xl w-full sm:w-auto shadow-sm">
+              <div className="backdrop-blur-xl bg-white/90 border border-slate-200/90 p-5 rounded-3xl w-full sm:w-auto shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-slate-400 text-xs font-mono">VENTANA CLÍNICA RESTANTE</span>
-                  <Timer className="w-4 h-4 text-neon-emerald animate-pulse" />
+                  <span className="text-slate-500 text-xs font-mono font-medium">VENTANA CLÍNICA RESTANTE</span>
+                  <Timer className="w-4 h-4 text-emerald-600 animate-pulse" />
                 </div>
-                <div className="text-3xl font-bold font-mono text-white">
+                <div className="text-3xl font-extrabold font-mono text-slate-900">
                   {formatTime(transitSeconds)}
                 </div>
-                <div className="flex items-center space-x-2 mt-3 pt-2.5 border-t border-white/[0.08] text-xs font-body text-slate-300">
-                  <Truck className="w-3.5 h-3.5 text-neon-cyan" />
-                  <span>Dosis administradas hoy: <strong className="text-white font-semibold">{deliveredDoses}</strong></span>
+                <div className="flex items-center space-x-2 mt-3 pt-2.5 border-t border-slate-100 text-xs font-body text-slate-600">
+                  <Truck className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Dosis administradas hoy: <strong className="text-slate-900 font-bold">{deliveredDoses}</strong></span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 3 Tarjetas de Isótopos y Decaimiento en Tiempo Real */}
+        {/* 3 Tarjetas de Isótopos y Decaimiento */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {isotopes.map((iso, idx) => (
             <div
               key={idx}
               onMouseEnter={() => soundEngine.playHover()}
-              className="logistics-card backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] p-6 sm:p-7 rounded-2xl hover:border-white/[0.2] hover:bg-white/[0.06] transition-all duration-300 group relative overflow-hidden"
+              className="logistics-card backdrop-blur-xl bg-white/90 border border-slate-200/90 p-6 sm:p-7 rounded-3xl hover:border-slate-300 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2.5">
                   <span className={`text-xl font-bold font-mono ${iso.color}`}>{iso.code}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-300">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">
                     T½: {iso.halfLife}
                   </span>
                 </div>
-                <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border ${iso.badgeBg}`}>
+                <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border font-bold ${iso.badgeBg}`}>
                   {iso.status}
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-lg text-white mb-3 group-hover:text-emerald-300 transition-colors">
+              <h3 className="font-display font-bold text-lg text-slate-900 mb-3 group-hover:text-emerald-600 transition-colors">
                 {iso.name}
               </h3>
 
-              {/* Barra de Actividad Residual en Tiempo Real */}
+              {/* Barra de Actividad Residual */}
               <div className="mb-5">
                 <div className="flex justify-between text-xs font-mono mb-1.5">
-                  <span className="text-slate-400">Actividad residual:</span>
+                  <span className="text-slate-500 font-body">Actividad residual:</span>
                   <span className={`font-bold ${iso.color}`}>{iso.currentActivity}</span>
                 </div>
-                <div className="w-full h-2 bg-white/[0.08] rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-neon-cyan to-neon-emerald transition-all duration-1000 rounded-full"
+                    className={`h-full bg-gradient-to-r ${iso.gradient} transition-all duration-1000 rounded-full`}
                     style={{ width: `${Math.min(100, Math.max(0, iso.progressVal))}%` }}
                   />
                 </div>
               </div>
 
               {/* Destino y Ventana */}
-              <div className="pt-3.5 border-t border-white/[0.08] space-y-2 text-xs font-body text-slate-300">
+              <div className="pt-3.5 border-t border-slate-100 space-y-2 text-xs font-body text-slate-600">
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span className="truncate">{iso.destination}</span>
                 </div>
                 <div className="flex items-center justify-between pt-0.5 font-mono text-[11px]">
-                  <span className="text-slate-400">Llegada prevista:</span>
-                  <span className="text-white font-medium">{iso.eta}</span>
+                  <span className="text-slate-500 font-body">Llegada prevista:</span>
+                  <span className="text-slate-900 font-bold">{iso.eta}</span>
                 </div>
               </div>
 
@@ -214,35 +217,35 @@ export const SynthesisSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Garantías de Seguridad en Transporte y Cadena de Frío */}
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 sm:p-7 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm font-body">
+        {/* Garantías de Seguridad en Transporte */}
+        <div className="backdrop-blur-xl bg-white/90 border border-slate-200/90 rounded-3xl p-6 sm:p-7 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm font-body shadow-xs">
           <div className="flex items-center space-x-3.5">
-            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
-              <Thermometer className="w-5 h-5 text-neon-cyan" />
+            <div className="p-3 rounded-2xl bg-teal-50 border border-teal-200">
+              <Thermometer className="w-5 h-5 text-teal-600" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 uppercase font-mono">Control Térmico</div>
-              <div className="text-white font-semibold mt-0.5">4.2 °C (Criocontrol Continuo)</div>
+              <div className="text-xs text-slate-500 uppercase font-mono font-medium">Control Térmico</div>
+              <div className="text-slate-900 font-bold mt-0.5">4.2 °C (Criocontrol Continuo)</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3.5">
-            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
-              <ShieldCheck className="w-5 h-5 text-neon-emerald" />
+            <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 uppercase font-mono">Blindaje Radiológico</div>
-              <div className="text-white font-semibold mt-0.5">Contenedor Tipo A Certificado</div>
+              <div className="text-xs text-slate-500 uppercase font-mono font-medium">Blindaje Radiológico</div>
+              <div className="text-slate-900 font-bold mt-0.5">Contenedor Tipo A Certificado</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3.5">
-            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
-              <Gauge className="w-5 h-5 text-neon-cobalt" />
+            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200">
+              <Gauge className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 uppercase font-mono">Trazabilidad Satelital</div>
-              <div className="text-white font-semibold mt-0.5">Monitoreo GPS y Telemetría</div>
+              <div className="text-xs text-slate-500 uppercase font-mono font-medium">Trazabilidad Satelital</div>
+              <div className="text-slate-900 font-bold mt-0.5">Monitoreo GPS y Telemetría</div>
             </div>
           </div>
         </div>

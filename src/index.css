@@ -1,73 +1,69 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cyber-950: #0A0F1E; /* Azul marino clínico profundo y sereno */
-  --color-cyber-900: #0F172A; /* Slate hospitalario */
-  --color-cyber-850: #1E293B;
-  --color-cyber-800: #334155;
-  --color-cyber-card: rgba(255, 255, 255, 0.04);
+  --color-cyber-950: #F8FAFC; /* Fondo base blanco perla / hospitalario */
+  --color-cyber-900: #F1F5F9; /* Slate 100 suave */
+  --color-cyber-850: #E2E8F0; /* Slate 200 */
+  --color-cyber-800: #CBD5E1;
+  --color-cyber-card: rgba(255, 255, 255, 0.85);
   
-  --color-neon-cyan: #00D4B2;   /* Cian médico de alta pureza */
-  --color-neon-cobalt: #3B82F6; /* Azul salud / bio-energía */
-  --color-neon-emerald: #10B981; /* Verde clínico de validación */
-  --color-neon-violet: #8B5CF6; /* Violeta molecular */
-  --color-neon-amber: #F59E0B;
-  --color-neon-red: #EF4444;
+  --color-neon-cyan: #0D9488;   /* Teal / Cian médico de alta legibilidad */
+  --color-neon-cobalt: #2563EB; /* Azul salud / bio-energía */
+  --color-neon-emerald: #059669; /* Verde clínico de validación */
+  --color-neon-violet: #7C3AED; /* Violeta molecular */
+  --color-neon-amber: #D97706;
+  --color-neon-red: #DC2626;
   
-  --color-clinical-bg: #0A0F1E;
-  --color-clinical-text: #F8FAFC;
-  --color-clinical-dim: #94A3B8;
-  --color-clinical-muted: #64748B;
+  --color-clinical-bg: #F8FAFC;
+  --color-clinical-text: #0F172A; /* Slate 900 de alto contraste */
+  --color-clinical-dim: #475569;  /* Slate 600 */
+  --color-clinical-muted: #64748B; /* Slate 500 */
 
-  /* Tipografías: Plus Jakarta Sans / Inter para un aspecto humano y profesional */
-  --font-display: "Space Grotesk", "Inter", sans-serif;
+  /* Tipografías: Plus Jakarta Sans / Inter para un aspecto humano, limpio y moderno */
+  --font-display: "Plus Jakarta Sans", "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
   scroll-behavior: auto;
+  background-color: #F8FAFC;
 }
 
 body {
-  background-color: #0A0F1E;
-  color: #F8FAFC;
+  background-color: #F8FAFC;
+  color: #0F172A;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
-/* Resplandores Médicos Suaves y Cristal Clínico */
+/* Resplandores Médicos Suaves en Fondos Claros */
 .text-glow-cyan {
-  text-shadow: 0 0 16px rgba(0, 212, 178, 0.45);
+  color: #0D9488;
+  text-shadow: 0 2px 10px rgba(13, 148, 136, 0.2);
 }
 
 .text-glow-cobalt {
-  text-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+  color: #2563EB;
+  text-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
 }
 
 .text-glow-emerald {
-  text-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
+  color: #059669;
+  text-shadow: 0 2px 10px rgba(5, 150, 105, 0.2);
 }
 
-.box-glow-cyan {
-  box-shadow: 0 10px 30px -10px rgba(0, 212, 178, 0.25);
-}
-
-.box-glow-cobalt {
-  box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.25);
-}
-
-/* Glassmorphism Médico: Limpio, hospitalario, con cristal esmerilado suave */
+/* Glassmorphism Blanco Sanitario */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 }
 
 .glass-panel-hover {
@@ -75,41 +71,49 @@ body {
 }
 
 .glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(0, 212, 178, 0.3);
-  box-shadow: 0 12px 32px -4px rgba(0, 212, 178, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(13, 148, 136, 0.35);
+  box-shadow: 0 20px 35px -10px rgba(13, 148, 136, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
   transform: translateY(-2px);
 }
 
-.corner-brackets {
-  position: relative;
-}
-
-/* Gradientes de luz ambiental médica */
+/* Luces Ambientales Bio-Celulares Suaves sobre Blanco */
 .ambient-glow-top {
   position: fixed;
-  top: -20%;
+  top: -15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 800px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(0, 212, 178, 0.12) 0%, rgba(59, 130, 246, 0.06) 40%, transparent 70%);
+  width: 900px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, rgba(37, 99, 235, 0.05) 45%, transparent 70%);
   pointer-events: none;
   z-index: 1;
-  filter: blur(60px);
+  filter: blur(70px);
 }
 
-/* Scrollbar clínico elegante */
+.ambient-glow-bottom {
+  position: fixed;
+  bottom: -20%;
+  right: 10%;
+  width: 700px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.07) 0%, rgba(16, 185, 129, 0.04) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+  filter: blur(80px);
+}
+
+/* Scrollbar clínico y elegante */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0F1E;
+  background: #F8FAFC;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(148, 163, 184, 0.4);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 212, 178, 0.5);
+  background: #0D9488;
 }

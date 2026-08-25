@@ -27,12 +27,13 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-cyber-950 text-clinical-text selection:bg-neon-cyan/20 selection:text-neon-cyan overflow-x-hidden font-body">
+    <div className="relative min-h-screen bg-slate-50 text-slate-900 selection:bg-teal-500/20 selection:text-teal-900 overflow-x-hidden font-body">
       
-      {/* 1. Iluminación Ambiental Médica Suave */}
+      {/* 1. Iluminación Ambiental Médica Suave sobre Blanco */}
       <div className="ambient-glow-top" />
+      <div className="ambient-glow-bottom" />
 
-      {/* 2. Fondo 3D Cuántico y Bio-energético (Canvas Fixed, inset-0, z-index: 0) */}
+      {/* 2. Fondo 3D: Doble Hélice de ADN que se une progresivamente al hacer Scroll */}
       <Background3D config={sandboxConfig} />
 
       {/* 3. Navegación Clínica Superior */}
@@ -41,7 +42,7 @@ export const App: React.FC = () => {
       {/* 4. Rastreador Vertical de Fases */}
       <ScrollyProgressHUD progress={scrollProgress} onSelectPhase={handleNavigate} />
 
-      {/* 5. Widget de Ajuste de Dosimetría y Shaders */}
+      {/* 5. Widget de Ajuste de Parámetros 3D */}
       <DiagnosticsWidget config={sandboxConfig} onChange={setSandboxConfig} />
 
       {/* 6. Secciones Narrativas de Medicina Nuclear */}

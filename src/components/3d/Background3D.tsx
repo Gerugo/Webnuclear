@@ -1,10 +1,8 @@
-import React, { useMemo, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useMemo } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { AdaptiveDpr } from '@react-three/drei';
 import * as THREE from 'three';
-import { AtomicNucleus } from './AtomicNucleus';
-import { RadioactiveCloud } from './RadioactiveCloud';
-import { CyberGrid } from './CyberGrid';
+import { DnaDoubleHelix } from './DnaDoubleHelix';
 import { CameraRig } from './CameraRig';
 import { type SandboxConfig } from '../../hooks/useScrollStore';
 
@@ -12,62 +10,44 @@ interface Background3DProps {
   config: SandboxConfig;
 }
 
-const ContinuousRotatingScene: React.FC<{ children: React.ReactNode; speed: number }> = ({ children, speed }) => {
-  const sceneRef = useRef<THREE.Group>(null);
-
-  useFrame((state, delta) => {
-    const elapsedTime = state.clock.getElapsedTime();
-    if (sceneRef.current) {
-      sceneRef.current.rotation.y += delta * 0.035 * speed;
-      sceneRef.current.rotation.x = Math.sin(elapsedTime * 0.2) * 0.025;
-      sceneRef.current.rotation.z = Math.cos(elapsedTime * 0.15) * 0.018;
-    }
-  });
-
-  return <group ref={sceneRef}>{children}</group>;
-};
-
 export const Background3D: React.FC<Background3DProps> = ({ config }) => {
   const colorMap = useMemo(() => ({
-    cyan: '#00D4B2',
-    emerald: '#10B981',
-    violet: '#8B5CF6',
-    amber: '#F59E0B',
+    cyan: '#0D9488',
+    emerald: '#059669',
+    violet: '#7C3AED',
+    amber: '#D97706',
   }), []);
 
-  const activeColor = colorMap[config.colorScheme] || '#00D4B2';
+  const activeColor = colorMap[config.colorScheme] || '#0D9488';
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" style={{ opacity: 0.96 }}>
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" style={{ opacity: 0.95 }}>
       <Canvas
-        camera={{ position: [0, 0, 9], fov: 60 }}
+        camera={{ position: [0, 0, 9], fov: 55 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.15,
+          toneMappingExposure: 1.05,
         }}
         dpr={[1, 2]}
       >
         <AdaptiveDpr pixelated />
         
-        {/* Atmósfera Serena y Profunda de Azul Marino Clínico #0A0F1E */}
-        <fogExp2 attach="fog" args={['#0A0F1E', 0.024]} />
+        {/* Atmósfera Blanca Hospitalaria Serena #F8FAFC */}
+        <fogExp2 attach="fog" args={['#F8FAFC', 0.022]} />
 
-        {/* Iluminación Médica Suave y Cálida */}
-        <ambientLight intensity={2.2} color="#0F172A" />
-        <pointLight position={[0, 3, 5]} intensity={3.0} color={activeColor} />
-        <pointLight position={[-3, -2, -2]} intensity={2.0} color="#3B82F6" />
+        {/* Iluminación Médica Brillante y Suave */}
+        <ambientLight intensity={1.8} color="#FFFFFF" />
+        <directionalLight position={[5, 10, 7]} intensity={2.2} color="#F0FDFA" />
+        <pointLight position={[-4, 4, 3]} intensity={3.5} color={activeColor} />
+        <pointLight position={[4, -4, 2]} intensity={2.5} color="#2563EB" />
 
         <CameraRig />
 
-        <ContinuousRotatingScene speed={config.speed}>
-          <AtomicNucleus config={config} />
-          <RadioactiveCloud config={config} />
-        </ContinuousRotatingScene>
-        
-        <CyberGrid />
+        {/* Doble Hélice de ADN que se sintetiza y une con el Scroll */}
+        <DnaDoubleHelix config={config} />
       </Canvas>
     </div>
   );

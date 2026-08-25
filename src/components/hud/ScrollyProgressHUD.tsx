@@ -1,6 +1,4 @@
 import React from 'react';
-import { global3DState } from '../../hooks/useScrollStore';
-import { soundEngine } from '../../audio/soundSynth';
 
 interface ScrollyProgressHUDProps {
   progress: number;
@@ -8,90 +6,65 @@ interface ScrollyProgressHUDProps {
 }
 
 export const ScrollyProgressHUD: React.FC<ScrollyProgressHUDProps> = ({ progress, onSelectPhase }) => {
-  const milestones = [
-    { id: '#hero', label: 'ORIGEN', stage: '00', code: 'HERO' },
-    { id: '#genesis', label: 'TECNOLOGÍA', stage: '01', code: 'TECH' },
-    { id: '#bio-synth', label: 'LOGÍSTICA', stage: '02', code: 'TIME' },
-    { id: '#deep-warp', label: 'CLÍNICA', stage: '03', code: 'CLIN' },
-    { id: '#sandbox', label: 'SIMULADOR', stage: '04', code: 'SIMU' },
+  const waypoints = [
+    { id: '#hero', label: '00 // INICIO', name: 'Despliegue ADN' },
+    { id: '#genesis', label: '01 // TECNOLOGÍA', name: 'Trazadores PET/SPECT' },
+    { id: '#bio-synth', label: '02 // LOGÍSTICA', name: 'Vida Media & JIT' },
+    { id: '#deep-warp', label: '03 // CLÍNICA', name: 'Oncología & Receptores' },
+    { id: '#sandbox', label: '04 // SIMULADOR', name: 'Dosimetría 3D' },
+    { id: '#contacto', label: '05 // CONTACTO', name: 'Solicitud de Dosis' },
   ];
 
-  const currentIdx = progress < 0.15 ? 0 : progress < 0.38 ? 1 : progress < 0.65 ? 2 : progress < 0.88 ? 3 : 4;
-
   return (
-    <aside className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-start space-y-6 pointer-events-auto select-none">
-      
-      {/* Telemetría Espacial Superior */}
-      <div className="font-mono text-[10px] text-clinical-dim space-y-0.5 border-l border-neon-cyan/40 pl-2.5">
-        <div>FASE: <strong className="text-neon-cyan">{milestones[currentIdx].stage}</strong></div>
-        <div>TRAVERSAL: <strong className="text-clinical-text">{(progress * 100).toFixed(0)}%</strong></div>
-        <div className="text-[9px] text-clinical-muted">Z-INDEX: {(-progress * 45).toFixed(1)}Z</div>
-      </div>
-
-      {/* Línea de Hitos Vertical Interactiva */}
-      <div className="relative flex flex-col space-y-5 pl-2 border-l border-white/10">
-        
-        {/* Indicador de barra de progreso con gradiente cian/esmeralda */}
+    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-start select-none">
+      {/* Barra Vertical de Progreso */}
+      <div className="relative pl-6 space-y-7">
+        <div className="absolute left-1.5 top-2 bottom-2 w-[2px] bg-slate-200" />
         <div
-          className="absolute left-[-1px] top-0 w-[2px] bg-gradient-to-b from-neon-cyan via-[#4361EE] to-neon-emerald transition-all duration-150"
+          className="absolute left-1.5 top-2 w-[2px] bg-teal-600 transition-all duration-150"
           style={{ height: `${Math.min(100, Math.max(0, progress * 100))}%` }}
         />
 
-        {milestones.map((m, idx) => {
-          const isActive = currentIdx === idx;
-          const isPassed = currentIdx >= idx;
+        {waypoints.map((wp, i) => {
+          const threshold = i / (waypoints.length - 1);
+          const isActive = Math.abs(progress - threshold) < 0.12;
 
           return (
             <div
-              key={m.id}
-              onClick={() => {
-                soundEngine.playClick();
-                onSelectPhase(m.id);
-              }}
-              onMouseEnter={() => soundEngine.playHover()}
+              key={wp.id}
+              onClick={() => onSelectPhase(wp.id)}
               className="group flex items-center space-x-3 cursor-pointer"
             >
-              {/* Waypoint Dot */}
+              {/* Punto Indicador */}
               <div
-                className={`relative w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-300 -ml-[23px] relative z-10 ${
                   isActive
-                    ? 'bg-neon-cyan ring-4 ring-neon-cyan/20 scale-125 shadow-[0_0_12px_#00F5D4]'
-                    : isPassed
-                    ? 'bg-neon-cyan/70'
-                    : 'bg-white/20 group-hover:bg-white/50'
+                    ? 'border-teal-600 bg-teal-600 scale-125 shadow-[0_0_10px_rgba(13,148,136,0.5)]'
+                    : 'border-slate-300 bg-white group-hover:border-teal-400 group-hover:scale-110'
                 }`}
-              >
-                {isActive && (
-                  <span className="absolute inset-0 rounded-full bg-neon-cyan animate-ping opacity-75" />
-                )}
-              </div>
+              />
 
-              {/* Waypoint Label */}
-              <div className="flex items-center space-x-2 font-display text-xs tracking-[0.18em]">
-                <span className={isActive ? 'text-neon-cyan font-bold' : 'text-clinical-muted group-hover:text-clinical-dim'}>
-                  {m.stage}
-                </span>
+              {/* Etiqueta */}
+              <div className="flex flex-col transition-all duration-300">
                 <span
-                  className={`transition-colors uppercase text-[11px] ${
-                    isActive
-                      ? 'text-white font-bold'
-                      : 'text-clinical-muted group-hover:text-clinical-dim'
+                  className={`font-mono text-[10px] font-semibold tracking-wider ${
+                    isActive ? 'text-teal-700 font-bold' : 'text-slate-400 group-hover:text-slate-600'
                   }`}
                 >
-                  {m.label}
+                  {wp.label}
+                </span>
+                <span
+                  className={`font-body text-xs ${
+                    isActive ? 'text-slate-900 font-bold' : 'text-slate-400 group-hover:text-slate-700'
+                  }`}
+                >
+                  {wp.name}
                 </span>
               </div>
             </div>
           );
         })}
       </div>
-
-      {/* Mini coordenadas de mouse */}
-      <div className="font-mono text-[9px] text-clinical-muted pl-2.5">
-        <span>X: {global3DState.mouse.x.toFixed(2)}</span>
-        <span className="ml-2">Y: {global3DState.mouse.y.toFixed(2)}</span>
-      </div>
-
-    </aside>
+    </div>
   );
 };

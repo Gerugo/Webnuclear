@@ -59,9 +59,9 @@ export const GenesisSection: React.FC = () => {
         { label: 'RESOLUCIÓN TOMOGRÁFICA', val: '< 1.8 mm' },
         { label: 'COINCIDENCIA FOTÓNICA', val: '511 keV PET' },
       ],
-      accentColor: 'text-neon-cyan',
-      borderColor: 'border-cyan-400/30',
-      activeBg: 'bg-cyan-500/[0.08]',
+      accentColor: 'text-teal-600',
+      badgeBg: 'bg-teal-50 text-teal-700 border-teal-200',
+      activeBorder: 'border-teal-500 shadow-md ring-2 ring-teal-500/10',
     },
     {
       id: 'pureza',
@@ -76,9 +76,9 @@ export const GenesisSection: React.FC = () => {
         { label: 'ACTIVIDAD ESPECÍFICA', val: '> 185 GBq/μmol' },
         { label: 'CONTROL DE CALIDAD', val: 'HPLC Digital en Tiempo Real' },
       ],
-      accentColor: 'text-neon-emerald',
-      borderColor: 'border-emerald-400/30',
-      activeBg: 'bg-emerald-500/[0.08]',
+      accentColor: 'text-emerald-600',
+      badgeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      activeBorder: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/10',
     },
     {
       id: 'sintesis',
@@ -93,9 +93,9 @@ export const GenesisSection: React.FC = () => {
         { label: 'RENDIMIENTO RADIOQUÍMICO', val: '> 82.4%' },
         { label: 'BLINDAJE DE PROTECCIÓN', val: '75 mm Equivalente Pb' },
       ],
-      accentColor: 'text-neon-cobalt',
-      borderColor: 'border-blue-400/30',
-      activeBg: 'bg-blue-500/[0.08]',
+      accentColor: 'text-blue-600',
+      badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
+      activeBorder: 'border-blue-500 shadow-md ring-2 ring-blue-500/10',
     },
   ];
 
@@ -109,23 +109,23 @@ export const GenesisSection: React.FC = () => {
         
         {/* Encabezado de Sección */}
         <div className="tech-header mb-12">
-          <div className="flex items-center space-x-2 text-neon-cyan font-mono text-xs mb-3">
-            <span className="px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] text-neon-cyan tracking-wider">
+          <div className="flex items-center space-x-2 text-teal-700 font-mono text-xs mb-3">
+            <span className="px-3 py-1 rounded-full bg-teal-50 border border-teal-200 font-bold tracking-wider">
               01 // TECNOLOGÍA BIOMÉDICA
             </span>
-            <span className="text-clinical-muted">•</span>
-            <span className="text-clinical-dim">INGENIERÍA DE RADIOFÁRMACOS</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-500">INGENIERÍA DE RADIOFÁRMACOS</span>
           </div>
 
-          <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
-            Tecnología en <span className="text-neon-cyan">Radiofármacos</span>
+          <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-slate-900 tracking-tight">
+            Tecnología en <span className="text-teal-600">Radiofármacos</span>
           </h2>
-          <p className="text-clinical-dim max-w-3xl text-base sm:text-lg mt-3 font-body leading-relaxed">
+          <p className="text-slate-600 max-w-3xl text-base sm:text-lg mt-3 font-body leading-relaxed">
             Plataforma integral de síntesis, purificación e imagen molecular orientada a maximizar la precisión diagnóstica y la seguridad en cada administración.
           </p>
         </div>
 
-        {/* 3 Tarjetas en Glassmorphism Frosted */}
+        {/* 3 Tarjetas en Cristal Blanco */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {technologies.map((tech, idx) => {
             const Icon = tech.icon;
@@ -139,40 +139,40 @@ export const GenesisSection: React.FC = () => {
                   setActiveCard(idx);
                 }}
                 onMouseEnter={() => soundEngine.playHover()}
-                className={`tech-card backdrop-blur-xl bg-white/[0.04] border p-6 sm:p-7 rounded-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
+                className={`tech-card backdrop-blur-xl bg-white/90 border p-6 sm:p-7 rounded-3xl transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
                   isSelected
-                    ? `border-white/[0.25] ${tech.activeBg} shadow-[0_8px_30px_rgba(0,0,0,0.25)]`
-                    : 'border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.18]'
+                    ? `${tech.activeBorder} bg-white`
+                    : 'border-slate-200/90 hover:border-slate-300 hover:shadow-md'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-5 font-mono text-xs">
                     <div className="flex items-center space-x-2.5">
-                      <div className="p-2.5 rounded-xl bg-white/[0.06] border border-white/[0.1]">
-                        <Icon className={`w-4 h-4 ${tech.accentColor}`} />
+                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <Icon className={`w-5 h-5 ${tech.accentColor}`} />
                       </div>
-                      <span className="text-slate-400 font-semibold">{tech.code}</span>
+                      <span className="text-slate-500 font-bold">{tech.code}</span>
                     </div>
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.05] text-slate-300 font-body">
+                    <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-body font-semibold ${tech.badgeBg}`}>
                       {tech.badge}
                     </span>
                   </div>
 
-                  <h3 className="font-display font-bold text-xl text-white mb-3 group-hover:text-cyan-300 transition-colors">
+                  <h3 className="font-display font-bold text-xl text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                     {tech.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-clinical-dim leading-relaxed font-body mb-6">
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-body mb-6">
                     {tech.summary}
                   </p>
                 </div>
 
                 {/* Métricas Principales */}
-                <div className="pt-4 border-t border-white/[0.08] space-y-2 font-mono text-xs">
+                <div className="pt-4 border-t border-slate-100 space-y-2 font-mono text-xs">
                   {tech.metrics.map((m, i) => (
                     <div key={i} className="flex justify-between items-center py-0.5">
-                      <span className="text-[11px] text-clinical-muted">{m.label}:</span>
-                      <span className={`font-semibold ${tech.accentColor}`}>{m.val}</span>
+                      <span className="text-[11px] text-slate-500 font-body">{m.label}:</span>
+                      <span className={`font-bold ${tech.accentColor}`}>{m.val}</span>
                     </div>
                   ))}
                 </div>
@@ -183,21 +183,21 @@ export const GenesisSection: React.FC = () => {
         </div>
 
         {/* Panel Detallado de la Tarjeta Seleccionada */}
-        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-2xl p-6 sm:p-8 relative">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/[0.08] pb-4 mb-4 gap-3">
+        <div className="backdrop-blur-xl bg-white/90 border border-slate-200/90 rounded-3xl p-6 sm:p-8 relative shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 mb-4 gap-3">
             <div className="flex items-center space-x-3">
-              <Sparkles className="w-5 h-5 text-neon-cyan" />
-              <h4 className="font-display font-bold text-base sm:text-lg text-white">
+              <Sparkles className="w-5 h-5 text-teal-600" />
+              <h4 className="font-display font-bold text-base sm:text-lg text-slate-900">
                 Especificaciones de Calidad: {technologies[activeCard].title}
               </h4>
             </div>
-            <span className="font-body text-xs px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center space-x-1.5 w-fit">
+            <span className="font-body text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center space-x-1.5 w-fit">
               <Check className="w-3.5 h-3.5" />
               <span>Conforme a Farmacopea Internacional</span>
             </span>
           </div>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-body">
+          <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-body">
             {technologies[activeCard].details}
           </p>
         </div>
