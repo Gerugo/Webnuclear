@@ -22,11 +22,11 @@ export const ContactTheranosticsSection: React.FC = () => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.contact-fade-header',
-        { opacity: 0, y: 35 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.9,
+          duration: 0.8,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -37,12 +37,12 @@ export const ContactTheranosticsSection: React.FC = () => {
 
       gsap.fromTo(
         formCardRef.current,
-        { opacity: 0, y: 45, scale: 0.96 },
+        { opacity: 0, y: 35, scale: 0.97 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.9,
+          duration: 0.8,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -57,9 +57,9 @@ export const ContactTheranosticsSection: React.FC = () => {
 
   const protocols = [
     { id: 'psma', name: 'Oncología Teranóstica (¹⁷⁷Lu / ⁶⁸Ga-PSMA)' },
-    { id: 'neuro', name: 'Neuroimagen Amiloide & Tau (¹⁸F-PET)' },
-    { id: 'cardio', name: 'Cardiología Cuantitativa (¹³N / ⁸²Rb)' },
-    { id: 'custom', name: 'Radiosíntesis Personalizada GMP Nuclia' },
+    { id: 'neuro', name: 'Neuroimagen Diagnóstica (¹⁸F-Florbetapir / DaTscan)' },
+    { id: 'cardio', name: 'Cardiología Cuantitativa (¹³N-Amoníaco / ⁸²Rb)' },
+    { id: 'custom', name: 'Radiosíntesis Clínica a Medida (GMP)' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,7 +67,7 @@ export const ContactTheranosticsSection: React.FC = () => {
     if (!formData.name || !formData.email || !formData.institution) return;
 
     soundEngine.playScan();
-    const hash = '0x' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
+    const hash = 'NUC-' + Math.floor(100000 + Math.random() * 900000);
     setDispatchHash(hash);
     setIsSubmitted(true);
   };
@@ -80,53 +80,53 @@ export const ContactTheranosticsSection: React.FC = () => {
     >
       <div className="max-w-5xl w-full mx-auto">
         
-        {/* Encabezado con Fade-in y TranslateY */}
+        {/* Encabezado Hospitalario */}
         <div className="contact-fade-header text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan font-mono text-xs mb-3 tracking-[0.2em]">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] text-neon-cyan font-mono text-xs mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>NUCLIA DIRECT // ENLACE CLÍNICO</span>
+            <span>ATENCIÓN HOSPITALARIA DIRECTA</span>
           </div>
 
-          <h2 className="font-display font-bold text-3xl sm:text-5xl text-white uppercase tracking-[0.14em]">
-            Contacto &amp; <span className="text-neon-cyan text-glow-cyan">Solicitud</span>
+          <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+            Contacto y <span className="text-neon-cyan">Solicitud de Dosis</span>
           </h2>
           <p className="text-clinical-dim text-sm sm:text-base mt-3 font-body leading-relaxed">
-            Coordinación directa con el equipo de radiofarmacia clínica de <strong className="text-white">Nuclia Health</strong> para comités de tumores, centros hospitalarios e investigadores.
+            Coordinación ágil con nuestro equipo de radiofarmacia clínica para comités de tumores, servicios hospitalarios de medicina nuclear e investigadores.
           </p>
         </div>
 
-        {/* Formulario con Entrada Suave */}
+        {/* Formulario en Frosted Medical Glass */}
         <div
           ref={formCardRef}
-          className="backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-10 corner-brackets shadow-[0_0_40px_rgba(0,245,212,0.1)] relative"
+          className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] rounded-3xl p-6 sm:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)] relative"
         >
           {isSubmitted ? (
-            <div className="py-12 text-center space-y-5 animate-in fade-in zoom-in-95 duration-300">
-              <div className="w-16 h-16 rounded-full bg-neon-emerald/15 border border-neon-emerald/40 text-neon-emerald mx-auto flex items-center justify-center shadow-[0_0_25px_rgba(0,255,157,0.3)]">
+            <div className="py-10 text-center space-y-5 animate-in fade-in zoom-in-95 duration-300">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-lg">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
 
               <div>
-                <h3 className="font-display font-bold text-2xl text-white tracking-wider uppercase">
-                  Solicitud Teranóstica Registrada en Nuclia Health
+                <h3 className="font-display font-bold text-2xl text-white tracking-tight">
+                  Solicitud Registrada Correctamente
                 </h3>
-                <p className="text-clinical-dim text-sm mt-2 max-w-md mx-auto font-body">
-                  El equipo de radiofarmacia clínica y logística JIT se comunicará en menos de 2 horas para la calibración y ventana de entrega.
+                <p className="text-slate-300 text-sm mt-2 max-w-md mx-auto font-body">
+                  El equipo de radiofarmacia clínica de Nuclia Health se pondrá en contacto con el centro hospitalario para confirmar la ventana de entrega y calibración de actividad.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg backdrop-blur-md bg-white/5 border border-white/10 font-mono text-xs text-clinical-dim max-w-md mx-auto space-y-1 text-left">
+              <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/[0.08] font-body text-xs text-slate-300 max-w-md mx-auto space-y-2 text-left">
                 <div className="flex justify-between">
-                  <span>DISPATCH HASH:</span>
-                  <span className="text-neon-cyan font-bold">{dispatchHash}</span>
+                  <span className="text-slate-400 font-mono">CÓDIGO DE SEGUIMIENTO:</span>
+                  <span className="text-neon-cyan font-bold font-mono">{dispatchHash}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>PROTOCOLO:</span>
-                  <span className="text-white">{protocols.find((p) => p.id === formData.protocol)?.name}</span>
+                  <span className="text-slate-400">Protocolo:</span>
+                  <span className="text-white font-medium">{protocols.find((p) => p.id === formData.protocol)?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>CENTRO SOLICITANTE:</span>
-                  <span className="text-neon-emerald font-semibold">{formData.institution}</span>
+                  <span className="text-slate-400">Hospital / Centro:</span>
+                  <span className="text-emerald-400 font-medium">{formData.institution}</span>
                 </div>
               </div>
 
@@ -135,9 +135,9 @@ export const ContactTheranosticsSection: React.FC = () => {
                   soundEngine.playClick();
                   setIsSubmitted(false);
                 }}
-                className="px-6 py-2.5 rounded backdrop-blur-md bg-white/5 border border-white/15 text-xs font-mono text-clinical-text hover:border-neon-cyan hover:text-neon-cyan transition-all cursor-pointer"
+                className="px-6 py-2.5 rounded-xl bg-white/[0.06] border border-white/[0.12] text-xs font-body font-semibold text-white hover:bg-white/[0.1] transition-all cursor-pointer"
               >
-                NUEVA CONSULTA
+                Enviar Otra Consulta
               </button>
             </div>
           ) : (
@@ -145,64 +145,64 @@ export const ContactTheranosticsSection: React.FC = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-clinical-dim flex items-center space-x-1.5 uppercase">
+                  <label className="text-xs font-body font-medium text-slate-300 flex items-center space-x-1.5">
                     <User className="w-3.5 h-3.5 text-neon-cyan" />
-                    <span>Especialista / Investigador *</span>
+                    <span>Especialista / Médico Solicitante *</span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Dr. Alejandro Vance"
+                    placeholder="Dra. María Fernández"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg backdrop-blur-md bg-white/5 border border-white/10 text-white font-body text-sm placeholder:text-clinical-muted focus:outline-none focus:border-neon-cyan/60 focus:bg-white/8 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white font-body text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/60 focus:bg-white/[0.07] transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-clinical-dim flex items-center space-x-1.5 uppercase">
+                  <label className="text-xs font-body font-medium text-slate-300 flex items-center space-x-1.5">
                     <Building className="w-3.5 h-3.5 text-neon-cyan" />
-                    <span>Centro Hospitalario / Instituto *</span>
+                    <span>Centro Hospitalario o Instituto *</span>
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Hospital Universitario Central"
+                    placeholder="Hospital Universitario La Paz"
                     value={formData.institution}
                     onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg backdrop-blur-md bg-white/5 border border-white/10 text-white font-body text-sm placeholder:text-clinical-muted focus:outline-none focus:border-neon-cyan/60 focus:bg-white/8 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white font-body text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/60 focus:bg-white/[0.07] transition-all"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-clinical-dim flex items-center space-x-1.5 uppercase">
+                  <label className="text-xs font-body font-medium text-slate-300 flex items-center space-x-1.5">
                     <Mail className="w-3.5 h-3.5 text-neon-cyan" />
                     <span>Correo Electrónico Institucional *</span>
                   </label>
                   <input
                     type="email"
                     required
-                    placeholder="a.vance@hospital.org"
+                    placeholder="m.fernandez@hospital.es"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg backdrop-blur-md bg-white/5 border border-white/10 text-white font-body text-sm placeholder:text-clinical-muted focus:outline-none focus:border-neon-cyan/60 focus:bg-white/8 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white font-body text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/60 focus:bg-white/[0.07] transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-mono text-clinical-dim flex items-center space-x-1.5 uppercase">
+                  <label className="text-xs font-body font-medium text-slate-300 flex items-center space-x-1.5">
                     <FileText className="w-3.5 h-3.5 text-neon-cyan" />
-                    <span>Protocolo de Radiofármaco *</span>
+                    <span>Protocolo o Radiofármaco de Interés *</span>
                   </label>
                   <select
                     value={formData.protocol}
                     onChange={(e) => setFormData({ ...formData, protocol: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg backdrop-blur-md bg-[#080B10] border border-white/10 text-white font-body text-sm focus:outline-none focus:border-neon-cyan/60 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-white/[0.1] text-white font-body text-sm focus:outline-none focus:border-cyan-400/60 transition-all cursor-pointer"
                   >
                     {protocols.map((p) => (
-                      <option key={p.id} value={p.id} className="bg-[#080B10] text-white">
+                      <option key={p.id} value={p.id} className="bg-[#0F172A] text-white">
                         {p.name}
                       </option>
                     ))}
@@ -211,31 +211,31 @@ export const ContactTheranosticsSection: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-clinical-dim uppercase">
-                  Detalles Clínicos / Especificación de Dosis
+                <label className="text-xs font-body font-medium text-slate-300">
+                  Detalles de la Solicitud / Estimación de Pacientes o Dosis
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Detalles sobre la ventana de calibración, patología diana o fecha estimada de administración..."
+                  placeholder="Indica cualquier requerimiento sobre fecha estimada de inyección, patología diana o calibración especial..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg backdrop-blur-md bg-white/5 border border-white/10 text-white font-body text-sm placeholder:text-clinical-muted focus:outline-none focus:border-neon-cyan/60 focus:bg-white/8 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.1] text-white font-body text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-400/60 focus:bg-white/[0.07] transition-all resize-none"
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between pt-2 gap-4">
-                <div className="flex items-center space-x-2 text-xs font-mono text-clinical-muted">
-                  <ShieldCheck className="w-4 h-4 text-neon-emerald" />
-                  <span>Transmisión encriptada bajo estándares HIPAA / GDPR</span>
+                <div className="flex items-center space-x-2 text-xs font-body text-slate-400">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Tratamiento confidencial de datos conforme a RGPD y normativas sanitarias</span>
                 </div>
 
                 <button
                   type="submit"
                   onMouseEnter={() => soundEngine.playHover()}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded bg-neon-cyan text-cyber-950 font-display font-bold text-xs tracking-[0.2em] uppercase overflow-hidden shadow-[0_0_25px_rgba(0,245,212,0.4)] hover:shadow-[0_0_40px_rgba(0,245,212,0.7)] transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-neon-cyan to-cyan-400 text-slate-950 font-body font-semibold text-sm shadow-[0_4px_24px_rgba(0,212,178,0.3)] hover:shadow-[0_8px_32px_rgba(0,212,178,0.5)] transition-all cursor-pointer flex items-center justify-center space-x-2"
                 >
                   <Send className="w-4 h-4" />
-                  <span>TRANSMITIR SOLICITUD</span>
+                  <span>Enviar Solicitud Hospitalaria</span>
                 </button>
               </div>
 

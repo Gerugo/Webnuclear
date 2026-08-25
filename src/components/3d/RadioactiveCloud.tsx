@@ -16,15 +16,15 @@ export const RadioactiveCloud: React.FC<RadioactiveCloudProps> = ({ config }) =>
   const swarmGroupRef = useRef<THREE.Group>(null);
 
   const colorMap = useMemo(() => ({
-    cyan: { primary: new THREE.Color(0x00f5d4), secondary: new THREE.Color(0x4361ee), accent: new THREE.Color(0x7000ff) },
-    emerald: { primary: new THREE.Color(0x00ff9d), secondary: new THREE.Color(0x00f5d4), accent: new THREE.Color(0x024d31) },
-    violet: { primary: new THREE.Color(0x9d4edd), secondary: new THREE.Color(0x4361ee), accent: new THREE.Color(0xff007f) },
-    amber: { primary: new THREE.Color(0xffb703), secondary: new THREE.Color(0xff5400), accent: new THREE.Color(0xff0055) },
+    cyan: { primary: new THREE.Color(0x00D4B2), secondary: new THREE.Color(0x3B82F6), accent: new THREE.Color(0x60A5FA) },
+    emerald: { primary: new THREE.Color(0x10B981), secondary: new THREE.Color(0x00D4B2), accent: new THREE.Color(0x047857) },
+    violet: { primary: new THREE.Color(0x8B5CF6), secondary: new THREE.Color(0x3B82F6), accent: new THREE.Color(0xC084FC) },
+    amber: { primary: new THREE.Color(0xF59E0B), secondary: new THREE.Color(0xD97706), accent: new THREE.Color(0xFBBF24) },
   }), []);
 
   const currentPalette = colorMap[config.colorScheme] || colorMap.cyan;
 
-  const count = useMemo(() => Math.floor(12000 * config.particleDensity), [config.particleDensity]);
+  const count = useMemo(() => Math.floor(10000 * config.particleDensity), [config.particleDensity]);
 
   const [positions, scales, phaseOffsets] = useMemo(() => {
     const pPositions = new Float32Array(count * 3);
@@ -37,13 +37,13 @@ export const RadioactiveCloud: React.FC<RadioactiveCloudProps> = ({ config }) =>
       const theta = u * 2.0 * Math.PI;
       const phi = Math.acos(2.0 * v - 1.0);
       
-      const r = 2.0 + Math.pow(Math.random(), 2.2) * 22.0;
+      const r = 2.2 + Math.pow(Math.random(), 2.0) * 20.0;
 
       pPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       pPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       pPositions[i * 3 + 2] = r * Math.cos(phi);
 
-      pScales[i] = 0.6 + Math.random() * 2.2;
+      pScales[i] = 0.5 + Math.random() * 1.8;
       pPhaseOffsets[i] = Math.random() * Math.PI * 2;
     }
 
@@ -81,44 +81,33 @@ export const RadioactiveCloud: React.FC<RadioactiveCloudProps> = ({ config }) =>
       materialRef.current.uniforms.uAccent.value = currentPalette.secondary;
     }
 
-    // Rotación del enjambre gobernada por GSAP
     if (swarmGroupRef.current) {
-      swarmGroupRef.current.rotation.x = gsap3DControls.swarmRotationX + Math.sin(elapsedTime * 0.2) * 0.05;
-      swarmGroupRef.current.rotation.y = gsap3DControls.swarmRotationY + (elapsedTime * 0.06 * config.speed);
+      swarmGroupRef.current.rotation.x = gsap3DControls.swarmRotationX + Math.sin(elapsedTime * 0.15) * 0.03;
+      swarmGroupRef.current.rotation.y = gsap3DControls.swarmRotationY + (elapsedTime * 0.04 * config.speed);
       swarmGroupRef.current.rotation.z = gsap3DControls.swarmRotationZ;
     }
 
-    // Nodos orbitales
     if (orbitalIsotopesRef.current) {
-      orbitalIsotopesRef.current.rotation.y += delta * 0.3 * config.speed;
-      orbitalIsotopesRef.current.rotation.z += delta * 0.15;
+      orbitalIsotopesRef.current.rotation.y += delta * 0.2 * config.speed;
+      orbitalIsotopesRef.current.rotation.z += delta * 0.1;
     }
   });
 
   const isotopeNodes = useMemo(() => [
-    { radius: 4.2, speed: 1.2, scale: 0.22, offset: 0, color: '#00F5D4' },
-    { radius: 5.6, speed: 0.9, scale: 0.18, offset: Math.PI * 0.6, color: '#4361EE' },
-    { radius: 6.8, speed: 1.5, scale: 0.26, offset: Math.PI * 1.2, color: '#00F5D4' },
-    { radius: 8.2, speed: 0.7, scale: 0.15, offset: Math.PI * 1.8, color: '#9d4edd' },
+    { radius: 4.0, speed: 1.0, scale: 0.2, offset: 0, color: '#00D4B2' },
+    { radius: 5.4, speed: 0.8, scale: 0.16, offset: Math.PI * 0.6, color: '#3B82F6' },
+    { radius: 6.6, speed: 1.2, scale: 0.22, offset: Math.PI * 1.2, color: '#00D4B2' },
+    { radius: 7.8, speed: 0.6, scale: 0.14, offset: Math.PI * 1.8, color: '#10B981' },
   ], []);
 
   return (
     <group ref={swarmGroupRef}>
-      {/* 1. Nube de Partículas Cuánticas con Flujo Lineal / Radial */}
+      {/* Nube de Partículas de Radioisótopos */}
       <points ref={pointsRef}>
         <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[positions, 3]}
-          />
-          <bufferAttribute
-            attach="attributes-aScale"
-            args={[scales, 1]}
-          />
-          <bufferAttribute
-            attach="attributes-aPhaseOffset"
-            args={[phaseOffsets, 1]}
-          />
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+          <bufferAttribute attach="attributes-aScale" args={[scales, 1]} />
+          <bufferAttribute attach="attributes-aPhaseOffset" args={[phaseOffsets, 1]} />
         </bufferGeometry>
         <shaderMaterial
           ref={materialRef}
@@ -131,40 +120,35 @@ export const RadioactiveCloud: React.FC<RadioactiveCloudProps> = ({ config }) =>
         />
       </points>
 
-      {/* 2. Sparkles de Radiación */}
+      {/* Emisión Sutil de Destellos Radiactivos */}
       <Sparkles
-        count={250}
+        count={180}
         scale={[16 * gsap3DControls.particleDispersion, 16 * (1 - gsap3DControls.particleLinearFlow * 0.7), 16]}
-        size={3.5}
-        speed={0.8 * config.speed}
-        color="#00F5D4"
+        size={2.8}
+        speed={0.6 * config.speed}
+        color="#00D4B2"
+        opacity={0.5}
+      />
+      <Sparkles
+        count={90}
+        scale={[10 * gsap3DControls.particleDispersion, 10 * (1 - gsap3DControls.particleLinearFlow * 0.7), 10]}
+        size={4.0}
+        speed={1.0 * config.speed}
+        color="#3B82F6"
         opacity={0.65}
       />
-      <Sparkles
-        count={120}
-        scale={[10 * gsap3DControls.particleDispersion, 10 * (1 - gsap3DControls.particleLinearFlow * 0.7), 10]}
-        size={5.0}
-        speed={1.4 * config.speed}
-        color="#4361EE"
-        opacity={0.8}
-      />
 
-      {/* 3. Nodos de Radioisótopos Flotantes */}
+      {/* Nodos de Trazadores Moleculares Flotantes */}
       <group ref={orbitalIsotopesRef}>
         {isotopeNodes.map((node, i) => (
           <group key={i} rotation={[0, node.offset, Math.PI / 4]}>
-            <mesh position={[node.radius * gsap3DControls.particleDispersion, Math.sin(node.offset) * 1.5, 0]}>
-              <octahedronGeometry args={[node.scale, 0]} />
-              <meshBasicMaterial
-                color={node.color}
-                wireframe
-                transparent
-                opacity={0.85}
-              />
+            <mesh position={[node.radius * gsap3DControls.particleDispersion, Math.sin(node.offset) * 1.2, 0]}>
+              <sphereGeometry args={[node.scale * 0.7, 16, 16]} />
+              <meshBasicMaterial color={node.color} transparent opacity={0.8} />
             </mesh>
-            <mesh position={[node.radius * gsap3DControls.particleDispersion, Math.sin(node.offset) * 1.5, 0]}>
-              <sphereGeometry args={[node.scale * 0.45, 16, 16]} />
-              <meshBasicMaterial color={node.color} />
+            <mesh position={[node.radius * gsap3DControls.particleDispersion, Math.sin(node.offset) * 1.2, 0]}>
+              <sphereGeometry args={[node.scale * 1.4, 16, 16]} />
+              <meshBasicMaterial color={node.color} transparent opacity={0.15} />
             </mesh>
           </group>
         ))}

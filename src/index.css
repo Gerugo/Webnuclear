@@ -1,26 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cyber-950: #080B10; /* Fondo base clínico */
-  --color-cyber-900: #0d121b;
-  --color-cyber-850: #121926;
-  --color-cyber-800: #182234;
-  --color-cyber-700: #21304a;
-  --color-cyber-card: rgba(255, 255, 255, 0.05);
-  --color-neon-cyan: #00F5D4;   /* Acento primario (Cian nuclear) */
-  --color-neon-cobalt: #4361EE; /* Acento secundario (Cobalto / Energía) */
-  --color-neon-emerald: #00ff9d;
-  --color-neon-violet: #9d4edd;
-  --color-neon-amber: #ffb703;
-  --color-neon-red: #ff2a5f;
-  --color-clinical-bg: #080B10;
-  --color-clinical-text: #ecf2f8;
-  --color-clinical-dim: #8b9bb4;
-  --color-clinical-muted: #4a5b78;
+  --color-cyber-950: #0A0F1E; /* Azul marino clínico profundo y sereno */
+  --color-cyber-900: #0F172A; /* Slate hospitalario */
+  --color-cyber-850: #1E293B;
+  --color-cyber-800: #334155;
+  --color-cyber-card: rgba(255, 255, 255, 0.04);
+  
+  --color-neon-cyan: #00D4B2;   /* Cian médico de alta pureza */
+  --color-neon-cobalt: #3B82F6; /* Azul salud / bio-energía */
+  --color-neon-emerald: #10B981; /* Verde clínico de validación */
+  --color-neon-violet: #8B5CF6; /* Violeta molecular */
+  --color-neon-amber: #F59E0B;
+  --color-neon-red: #EF4444;
+  
+  --color-clinical-bg: #0A0F1E;
+  --color-clinical-text: #F8FAFC;
+  --color-clinical-dim: #94A3B8;
+  --color-clinical-muted: #64748B;
 
-  /* Tipografías */
-  --font-display: "Space Grotesk", "Rajdhani", sans-serif;
-  --font-mono: "JetBrains Mono", "Space Mono", monospace;
+  /* Tipografías: Plus Jakarta Sans / Inter para un aspecto humano y profesional */
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -33,125 +34,82 @@ html {
 }
 
 body {
-  background-color: #080B10;
-  color: #ecf2f8;
+  background-color: #0A0F1E;
+  color: #F8FAFC;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
-/* Cybernetic Glowing Utilities & Clinical HUD */
+/* Resplandores Médicos Suaves y Cristal Clínico */
 .text-glow-cyan {
-  text-shadow: 0 0 10px rgba(0, 245, 212, 0.6), 0 0 20px rgba(0, 245, 212, 0.3);
+  text-shadow: 0 0 16px rgba(0, 212, 178, 0.45);
 }
 
 .text-glow-cobalt {
-  text-shadow: 0 0 10px rgba(67, 97, 238, 0.7), 0 0 20px rgba(67, 97, 238, 0.35);
+  text-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
 }
 
 .text-glow-emerald {
-  text-shadow: 0 0 10px rgba(0, 255, 157, 0.6), 0 0 20px rgba(0, 255, 157, 0.3);
-}
-
-.text-glow-violet {
-  text-shadow: 0 0 10px rgba(157, 78, 221, 0.6), 0 0 20px rgba(157, 78, 221, 0.3);
+  text-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
 }
 
 .box-glow-cyan {
-  box-shadow: 0 0 25px -5px rgba(0, 245, 212, 0.25), inset 0 0 15px -3px rgba(0, 245, 212, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 212, 178, 0.25);
 }
 
 .box-glow-cobalt {
-  box-shadow: 0 0 25px -5px rgba(67, 97, 238, 0.3), inset 0 0 15px -3px rgba(67, 97, 238, 0.15);
+  box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.25);
 }
 
-.box-glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(0, 255, 157, 0.25), inset 0 0 15px -3px rgba(0, 255, 157, 0.1);
-}
-
-.border-glow-cyan {
-  border-color: rgba(0, 245, 212, 0.4);
-  box-shadow: 0 0 12px rgba(0, 245, 212, 0.2);
-}
-
-.border-glow-cobalt {
-  border-color: rgba(67, 97, 238, 0.45);
-  box-shadow: 0 0 14px rgba(67, 97, 238, 0.25);
-}
-
-/* Glassmorphism: tarjetas con backdrop-blur-md, bg-white/5 y border-white/10 */
+/* Glassmorphism Médico: Limpio, hospitalario, con cristal esmerilado suave */
 .glass-panel {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
 }
 
-.glass-panel-glow {
-  background-color: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 245, 212, 0.35);
-  box-shadow: 0 10px 30px -10px rgba(0, 245, 212, 0.15);
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(0, 212, 178, 0.3);
+  box-shadow: 0 12px 32px -4px rgba(0, 212, 178, 0.15);
+  transform: translateY(-2px);
 }
 
 .corner-brackets {
   position: relative;
 }
 
-.corner-brackets::before,
-.corner-brackets::after {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  pointer-events: none;
-}
-
-.corner-brackets::before {
-  top: -1px;
-  left: -1px;
-  border-top: 2px solid #00F5D4;
-  border-left: 2px solid #00F5D4;
-}
-
-.corner-brackets::after {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 2px solid #00F5D4;
-  border-right: 2px solid #00F5D4;
-}
-
-/* CRT Scanline & Grain Aesthetic Overlay */
-.scanline-overlay {
+/* Gradientes de luz ambiental médica */
+.ambient-glow-top {
   position: fixed;
-  inset: 0;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 212, 178, 0.12) 0%, rgba(59, 130, 246, 0.06) 40%, transparent 70%);
   pointer-events: none;
-  z-index: 40;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-  background-size: 100% 3px, 6px 100%;
-  opacity: 0.55;
+  z-index: 1;
+  filter: blur(60px);
 }
 
-.vignette-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 39;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(8, 11, 16, 0.88) 100%);
-}
-
-/* Custom futuristic scrollbar */
+/* Scrollbar clínico elegante */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #080B10;
+  background: #0A0F1E;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 245, 212, 0.3);
-  border-radius: 2px;
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00F5D4;
-  box-shadow: 0 0 10px #00F5D4;
+  background: rgba(0, 212, 178, 0.5);
 }

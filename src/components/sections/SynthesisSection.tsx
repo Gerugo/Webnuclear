@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Timer, Plane, ShieldAlert, Cpu, MapPin, Gauge } from 'lucide-react';
+import { Timer, Truck, ShieldCheck, Thermometer, MapPin, Gauge } from 'lucide-react';
 import gsap from 'gsap';
 import { soundEngine } from '../../audio/soundSynth';
 
 export const SynthesisSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  // Estados de cálculo de decaimiento en tiempo real frente al reloj
   const [f18Activity, setF18Activity] = useState(87.4);
   const [ga68Activity, setGa68Activity] = useState(62.1);
   const [lu177Activity, setLu177Activity] = useState(99.4);
@@ -15,7 +14,6 @@ export const SynthesisSection: React.FC = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      // Simulación matemática del decaimiento exponencial N(t) = N0 * e^(-lambda * t)
       setF18Activity((prev) => Math.max(10, Number((prev - 0.04).toFixed(2))));
       setGa68Activity((prev) => Math.max(5, Number((prev - 0.08).toFixed(2))));
       setLu177Activity((prev) => Math.max(50, Number((prev - 0.005).toFixed(3))));
@@ -51,13 +49,13 @@ export const SynthesisSection: React.FC = () => {
 
       gsap.fromTo(
         '.logistics-card',
-        { opacity: 0, y: 50, scale: 0.94 },
+        { opacity: 0, y: 40, scale: 0.96 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
           duration: 0.8,
-          stagger: 0.18,
+          stagger: 0.14,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -83,11 +81,10 @@ export const SynthesisSection: React.FC = () => {
       halfLife: '109.7 min',
       currentActivity: `${f18Activity}%`,
       status: 'EN RUTA',
-      destination: 'Hospital Universitario // PET-CT 04',
-      eta: '18 min',
+      destination: 'Hospital Universitario // PET-CT',
+      eta: '18 min estimados',
       color: 'text-neon-cyan',
-      borderColor: 'border-neon-cyan/40',
-      badgeBg: 'bg-neon-cyan/10 text-neon-cyan',
+      badgeBg: 'bg-cyan-500/10 text-cyan-300 border-cyan-400/20',
       progressVal: f18Activity,
     },
     {
@@ -95,12 +92,11 @@ export const SynthesisSection: React.FC = () => {
       name: 'Galio-68 (DOTATOC)',
       halfLife: '67.7 min',
       currentActivity: `${ga68Activity}%`,
-      status: 'CALIBRACIÓN FINAL',
-      destination: 'Instituto Oncológico // PET-MR 02',
-      eta: '09 min',
+      status: 'CALIBRACIÓN',
+      destination: 'Instituto Oncológico // PET-MR',
+      eta: '09 min estimados',
       color: 'text-neon-emerald',
-      borderColor: 'border-neon-emerald/40',
-      badgeBg: 'bg-neon-emerald/10 text-neon-emerald',
+      badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-400/20',
       progressVal: ga68Activity,
     },
     {
@@ -108,12 +104,11 @@ export const SynthesisSection: React.FC = () => {
       name: 'Lutecio-177 (Teranóstica)',
       halfLife: '6.65 días',
       currentActivity: `${lu177Activity}%`,
-      status: 'DISPENSADO',
-      destination: 'Centro de Terapia Metabólica',
-      eta: 'Inyección Programada',
-      color: 'text-[#c084fc]',
-      borderColor: 'border-neon-violet/40',
-      badgeBg: 'bg-neon-violet/15 text-[#c084fc]',
+      status: 'PROGRAMADO',
+      destination: 'Servicio de Medicina Nuclear',
+      eta: 'Inyección en Turno',
+      color: 'text-neon-cobalt',
+      badgeBg: 'bg-blue-500/10 text-blue-300 border-blue-400/20',
       progressVal: lu177Activity,
     },
   ];
@@ -128,36 +123,37 @@ export const SynthesisSection: React.FC = () => {
         
         {/* Encabezado de Sección */}
         <div className="logistics-header mb-12">
-          <div className="flex items-center space-x-3 text-neon-emerald font-mono text-xs mb-3">
-            <span className="px-2.5 py-0.5 rounded-full bg-neon-emerald/10 border border-neon-emerald/30 tracking-[0.2em]">
-              FASE 02 // LOGÍSTICA &amp; VIDA MEDIA
+          <div className="flex items-center space-x-2 text-neon-emerald font-mono text-xs mb-3">
+            <span className="px-3 py-1 rounded-full bg-white/[0.06] border border-white/[0.1] text-neon-emerald tracking-wider">
+              02 // LOGÍSTICA HOSPITALARIA
             </span>
-            <span className="text-clinical-dim tracking-[0.15em]">// CADENA DE SUMINISTRO JUST-IN-TIME</span>
+            <span className="text-clinical-muted">•</span>
+            <span className="text-clinical-dim">CADENA DE SUMINISTRO JUST-IN-TIME</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
-              <h2 className="font-display font-bold text-3xl sm:text-5xl md:text-6xl text-white uppercase tracking-[0.14em]">
-                Precisión Temporal &amp; <span className="text-neon-emerald text-glow-emerald">Decaimiento</span>
+              <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+                Logística y <span className="text-neon-emerald">Vida Media</span>
               </h2>
               <p className="text-clinical-dim text-base sm:text-lg mt-3 font-body max-w-2xl leading-relaxed">
-                Debido a la vida media ultracorta de los radioisótopos médicos, cada segundo cuenta. Algoritmos predictivos sincronizan la producción del ciclotrón con la hora exacta de inyección al paciente.
+                Los radiofármacos de vida media corta exigen una sincronización milimétrica. Nuestro sistema coordina la producción en ciclotrón con la hora programada de administración a cada paciente.
               </p>
             </div>
 
-            {/* Módulo de Telemetría Global JIT */}
+            {/* Módulo de Telemetría Hospitalaria */}
             <div className="lg:col-span-4 flex justify-start lg:justify-end">
-              <div className="backdrop-blur-md bg-white/5 border border-neon-emerald/40 p-5 rounded-xl font-mono text-xs shadow-[0_0_25px_rgba(0,255,157,0.15)] w-full sm:w-auto">
+              <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.1] p-5 rounded-2xl w-full sm:w-auto shadow-sm">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-clinical-muted text-[10px] tracking-wider">TIEMPO VENTANA CRÍTICO</span>
+                  <span className="text-slate-400 text-xs font-mono">VENTANA CLÍNICA RESTANTE</span>
                   <Timer className="w-4 h-4 text-neon-emerald animate-pulse" />
                 </div>
-                <div className="text-2xl font-bold font-mono text-neon-emerald tracking-wider">
+                <div className="text-3xl font-bold font-mono text-white">
                   {formatTime(transitSeconds)}
                 </div>
-                <div className="flex items-center space-x-2 mt-2 pt-2 border-t border-white/10 text-[11px] text-clinical-dim">
-                  <Plane className="w-3.5 h-3.5 text-neon-cyan" />
-                  <span>Dosis Entregadas Hoy: <strong className="text-white">{deliveredDoses}</strong></span>
+                <div className="flex items-center space-x-2 mt-3 pt-2.5 border-t border-white/[0.08] text-xs font-body text-slate-300">
+                  <Truck className="w-3.5 h-3.5 text-neon-cyan" />
+                  <span>Dosis administradas hoy: <strong className="text-white font-semibold">{deliveredDoses}</strong></span>
                 </div>
               </div>
             </div>
@@ -165,52 +161,52 @@ export const SynthesisSection: React.FC = () => {
         </div>
 
         {/* 3 Tarjetas de Isótopos y Decaimiento en Tiempo Real */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {isotopes.map((iso, idx) => (
             <div
               key={idx}
               onMouseEnter={() => soundEngine.playHover()}
-              className="logistics-card backdrop-blur-md bg-white/5 border border-white/10 p-6 sm:p-7 rounded-xl hover:border-white/30 hover:bg-white/8 transition-all duration-300 group relative overflow-hidden"
+              className="logistics-card backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] p-6 sm:p-7 rounded-2xl hover:border-white/[0.2] hover:bg-white/[0.06] transition-all duration-300 group relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2.5">
                   <span className={`text-xl font-bold font-mono ${iso.color}`}>{iso.code}</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-clinical-dim">
-                    T½ = {iso.halfLife}
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-300">
+                    T½: {iso.halfLife}
                   </span>
                 </div>
-                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/10 ${iso.badgeBg}`}>
+                <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border ${iso.badgeBg}`}>
                   {iso.status}
                 </span>
               </div>
 
-              <h3 className="font-display font-bold text-lg text-white mb-3 tracking-[0.08em] group-hover:text-neon-emerald transition-colors">
+              <h3 className="font-display font-bold text-lg text-white mb-3 group-hover:text-emerald-300 transition-colors">
                 {iso.name}
               </h3>
 
               {/* Barra de Actividad Residual en Tiempo Real */}
               <div className="mb-5">
                 <div className="flex justify-between text-xs font-mono mb-1.5">
-                  <span className="text-clinical-muted">ACTIVIDAD RESIDUAL:</span>
+                  <span className="text-slate-400">Actividad residual:</span>
                   <span className={`font-bold ${iso.color}`}>{iso.currentActivity}</span>
                 </div>
-                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-white/[0.08] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-neon-cyan to-neon-emerald transition-all duration-1000"
+                    className="h-full bg-gradient-to-r from-neon-cyan to-neon-emerald transition-all duration-1000 rounded-full"
                     style={{ width: `${Math.min(100, Math.max(0, iso.progressVal))}%` }}
                   />
                 </div>
               </div>
 
-              {/* Datos de Telemetría Logística */}
-              <div className="pt-3 border-t border-white/10 space-y-2 font-mono text-xs text-clinical-dim">
+              {/* Destino y Ventana */}
+              <div className="pt-3.5 border-t border-white/[0.08] space-y-2 text-xs font-body text-slate-300">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-3.5 h-3.5 text-clinical-muted shrink-0" />
-                  <span className="truncate text-[11px]">{iso.destination}</span>
+                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span className="truncate">{iso.destination}</span>
                 </div>
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-[11px] text-clinical-muted">VENTANA ETA:</span>
-                  <span className="text-white font-semibold">{iso.eta}</span>
+                <div className="flex items-center justify-between pt-0.5 font-mono text-[11px]">
+                  <span className="text-slate-400">Llegada prevista:</span>
+                  <span className="text-white font-medium">{iso.eta}</span>
                 </div>
               </div>
 
@@ -218,35 +214,35 @@ export const SynthesisSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Banner de Monitoreo de Cadena de Frío y Blindaje Radiológico */}
-        <div className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-6 sm:p-7 grid grid-cols-1 sm:grid-cols-3 gap-6 font-mono text-xs">
+        {/* Garantías de Seguridad en Transporte y Cadena de Frío */}
+        <div className="backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 sm:p-7 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm font-body">
           <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 rounded-lg backdrop-blur-md bg-white/5 border border-white/10">
-              <Gauge className="w-5 h-5 text-neon-cyan" />
+            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
+              <Thermometer className="w-5 h-5 text-neon-cyan" />
             </div>
             <div>
-              <div className="text-[10px] text-clinical-muted uppercase">MONITOREO TÉRMICO</div>
-              <div className="text-sm font-bold text-white mt-0.5">4.2 °C (±0.1°C Estable)</div>
+              <div className="text-xs text-slate-400 uppercase font-mono">Control Térmico</div>
+              <div className="text-white font-semibold mt-0.5">4.2 °C (Criocontrol Continuo)</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 rounded-lg backdrop-blur-md bg-white/5 border border-white/10">
-              <ShieldAlert className="w-5 h-5 text-neon-emerald" />
+            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
+              <ShieldCheck className="w-5 h-5 text-neon-emerald" />
             </div>
             <div>
-              <div className="text-[10px] text-clinical-muted uppercase">BLINDAJE DE TRANSPORTE</div>
-              <div className="text-sm font-bold text-white mt-0.5">Tipo A (Tungsteno 45mm)</div>
+              <div className="text-xs text-slate-400 uppercase font-mono">Blindaje Radiológico</div>
+              <div className="text-white font-semibold mt-0.5">Contenedor Tipo A Certificado</div>
             </div>
           </div>
 
           <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 rounded-lg backdrop-blur-md bg-white/5 border border-white/10">
-              <Cpu className="w-5 h-5 text-[#c084fc]" />
+            <div className="p-3 rounded-xl bg-white/[0.05] border border-white/[0.1]">
+              <Gauge className="w-5 h-5 text-neon-cobalt" />
             </div>
             <div>
-              <div className="text-[10px] text-clinical-muted uppercase">SINCRONIZACIÓN SATELITAL</div>
-              <div className="text-sm font-bold text-white mt-0.5">GPS / Galileo Telemetry</div>
+              <div className="text-xs text-slate-400 uppercase font-mono">Trazabilidad Satelital</div>
+              <div className="text-white font-semibold mt-0.5">Monitoreo GPS y Telemetría</div>
             </div>
           </div>
         </div>

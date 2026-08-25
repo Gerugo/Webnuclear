@@ -12,17 +12,15 @@ interface Background3DProps {
   config: SandboxConfig;
 }
 
-// Contenedor con rotación sutil continua de toda la escena 3D en useFrame
 const ContinuousRotatingScene: React.FC<{ children: React.ReactNode; speed: number }> = ({ children, speed }) => {
   const sceneRef = useRef<THREE.Group>(null);
 
   useFrame((state, delta) => {
     const elapsedTime = state.clock.getElapsedTime();
     if (sceneRef.current) {
-      // Rotación orbital continua y ondulación armónica sutil
-      sceneRef.current.rotation.y += delta * 0.05 * speed;
-      sceneRef.current.rotation.x = Math.sin(elapsedTime * 0.25) * 0.035;
-      sceneRef.current.rotation.z = Math.cos(elapsedTime * 0.2) * 0.025;
+      sceneRef.current.rotation.y += delta * 0.035 * speed;
+      sceneRef.current.rotation.x = Math.sin(elapsedTime * 0.2) * 0.025;
+      sceneRef.current.rotation.z = Math.cos(elapsedTime * 0.15) * 0.018;
     }
   });
 
@@ -31,16 +29,16 @@ const ContinuousRotatingScene: React.FC<{ children: React.ReactNode; speed: numb
 
 export const Background3D: React.FC<Background3DProps> = ({ config }) => {
   const colorMap = useMemo(() => ({
-    cyan: '#00F5D4',   // Cian nuclear
-    emerald: '#00ff9d',
-    violet: '#9d4edd',
-    amber: '#ffb703',
+    cyan: '#00D4B2',
+    emerald: '#10B981',
+    violet: '#8B5CF6',
+    amber: '#F59E0B',
   }), []);
 
-  const activeColor = colorMap[config.colorScheme] || '#00F5D4';
+  const activeColor = colorMap[config.colorScheme] || '#00D4B2';
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" style={{ opacity: 0.95 }}>
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" style={{ opacity: 0.96 }}>
       <Canvas
         camera={{ position: [0, 0, 9], fov: 60 }}
         gl={{
@@ -48,30 +46,27 @@ export const Background3D: React.FC<Background3DProps> = ({ config }) => {
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.2,
+          toneMappingExposure: 1.15,
         }}
         dpr={[1, 2]}
       >
         <AdaptiveDpr pixelated />
         
-        {/* Niebla atmosférica profunda con fondo base #080B10 */}
-        <fogExp2 attach="fog" args={['#080B10', 0.025]} />
+        {/* Atmósfera Serena y Profunda de Azul Marino Clínico #0A0F1E */}
+        <fogExp2 attach="fog" args={['#0A0F1E', 0.024]} />
 
-        {/* Luces Ambiental y Puntual Dinámica */}
-        <ambientLight intensity={2.0} color="#0d1420" />
-        <pointLight position={[0, 2, 4]} intensity={3.5} color={activeColor} />
-        <pointLight position={[0, -2, -3]} intensity={2.0} color="#4361EE" />
+        {/* Iluminación Médica Suave y Cálida */}
+        <ambientLight intensity={2.2} color="#0F172A" />
+        <pointLight position={[0, 3, 5]} intensity={3.0} color={activeColor} />
+        <pointLight position={[-3, -2, -2]} intensity={2.0} color="#3B82F6" />
 
-        {/* Coreografía Cinemática de Cámara (Scrollytelling) */}
         <CameraRig />
 
-        {/* Grupo con Rotación Continua Sutil en useFrame */}
         <ContinuousRotatingScene speed={config.speed}>
           <AtomicNucleus config={config} />
           <RadioactiveCloud config={config} />
         </ContinuousRotatingScene>
         
-        {/* Rejilla de Profundidad Cibernética */}
         <CyberGrid />
       </Canvas>
     </div>

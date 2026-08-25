@@ -25,162 +25,162 @@ export const DiagnosticsWidget: React.FC<DiagnosticsWidgetProps> = ({ config, on
   };
 
   const colorOptions: Array<{ id: SandboxConfig['colorScheme']; name: string; color: string }> = [
-    { id: 'cyan', name: 'CYAN', color: 'bg-[#00F5D4]' },
-    { id: 'emerald', name: 'EMERALD', color: 'bg-[#00ff9d]' },
-    { id: 'violet', name: 'PLASMA', color: 'bg-[#9d4edd]' },
-    { id: 'amber', name: 'SOLAR', color: 'bg-[#ffb703]' },
+    { id: 'cyan', name: 'PET (¹⁸F)', color: 'bg-[#00D4B2]' },
+    { id: 'emerald', name: 'SPECT (⁹⁹ᵐTc)', color: 'bg-[#10B981]' },
+    { id: 'violet', name: 'TERAPIA (¹⁷⁷Lu)', color: 'bg-[#8B5CF6]' },
+    { id: 'amber', name: 'CARDIO (¹³N)', color: 'bg-[#F59E0B]' },
   ];
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-end">
-      {/* Expanded Control Matrix Drawer - Glassmorphism */}
+      {/* Cajón de Control de Dosimetría y Emisión */}
       {isOpen && (
-        <div className="mr-3 w-80 md:w-96 backdrop-blur-md bg-[#080B10]/85 border border-white/10 rounded-lg p-5 shadow-[0_0_30px_rgba(0,245,212,0.15)] animate-in fade-in slide-in-from-right-5 duration-200">
-          <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+        <div className="mr-3 w-80 md:w-96 backdrop-blur-2xl bg-[#0A0F1E]/90 border border-white/[0.12] rounded-3xl p-6 shadow-[0_16px_40px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-right-4 duration-200 font-body">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-3.5 mb-4">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-neon-cyan" />
-              <h3 className="font-display font-bold text-sm tracking-wider text-clinical-text uppercase">
-                3D Diagnostic Matrix
+              <h3 className="font-display font-bold text-sm text-white">
+                Simulador de Emisión 3D
               </h3>
             </div>
             <button
               onClick={handleReset}
               onMouseEnter={() => soundEngine.playHover()}
-              className="text-[11px] font-mono flex items-center space-x-1 text-clinical-dim hover:text-neon-cyan transition-colors"
+              className="text-xs font-body flex items-center space-x-1 text-slate-400 hover:text-neon-cyan transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>RESET</span>
+              <span>Restablecer</span>
             </button>
           </div>
 
-          {/* Color Scheme Selector */}
+          {/* Selector de Espectro / Radioisótopo */}
           <div className="mb-4">
-            <label className="text-[11px] font-mono text-clinical-dim block mb-2 uppercase">
-              // Quantum Spectrum
+            <label className="text-xs font-mono text-slate-400 block mb-2 font-semibold uppercase">
+              // Espectro del Radiofármaco
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {colorOptions.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => handleUpdate('colorScheme', opt.id)}
                   onMouseEnter={() => soundEngine.playHover()}
-                  className={`flex items-center justify-center space-x-1.5 py-1.5 px-2 rounded font-mono text-[10px] border transition-all ${
+                  className={`flex items-center space-x-2 py-2 px-3 rounded-xl text-xs font-body transition-all cursor-pointer ${
                     config.colorScheme === opt.id
-                      ? 'border-neon-cyan bg-neon-cyan/20 text-white font-bold shadow-[0_0_10px_rgba(0,245,212,0.4)]'
-                      : 'border-white/10 backdrop-blur-md bg-white/5 text-clinical-dim hover:border-white/30 hover:bg-white/10'
+                      ? 'border border-cyan-400/50 bg-cyan-500/15 text-white font-semibold shadow-sm'
+                      : 'border border-white/[0.08] bg-white/[0.03] text-slate-300 hover:bg-white/[0.06]'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${opt.color}`} />
-                  <span>{opt.name}</span>
+                  <span className={`w-2.5 h-2.5 rounded-full ${opt.color}`} />
+                  <span className="truncate">{opt.name}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Slider 1: Distortion */}
-          <div className="mb-3">
-            <div className="flex justify-between text-[11px] font-mono mb-1">
-              <span className="text-clinical-dim">SURFACE DISTORTION:</span>
-              <span className="text-neon-cyan font-bold">{config.distortion.toFixed(2)}x</span>
+          {/* Slider 1: Deformación Molecular */}
+          <div className="mb-3.5">
+            <div className="flex justify-between text-xs mb-1 font-body">
+              <span className="text-slate-300">Fluctuación de masa:</span>
+              <span className="text-neon-cyan font-mono font-bold">{config.distortion.toFixed(2)}x</span>
             </div>
             <input
               type="range"
               min="0.2"
-              max="3.0"
+              max="2.5"
               step="0.05"
               value={config.distortion}
               onChange={(e) => handleUpdate('distortion', parseFloat(e.target.value))}
-              className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+              className="w-full h-1.5 bg-white/[0.1] rounded-lg appearance-none cursor-pointer accent-neon-cyan"
             />
           </div>
 
-          {/* Slider 2: Orbital Speed */}
-          <div className="mb-3">
-            <div className="flex justify-between text-[11px] font-mono mb-1">
-              <span className="text-clinical-dim">ANGULAR VELOCITY:</span>
-              <span className="text-neon-cyan font-bold">{config.speed.toFixed(2)}x</span>
+          {/* Slider 2: Velocidad de Órbita */}
+          <div className="mb-3.5">
+            <div className="flex justify-between text-xs mb-1 font-body">
+              <span className="text-slate-300">Velocidad cinética:</span>
+              <span className="text-neon-cyan font-mono font-bold">{config.speed.toFixed(2)}x</span>
             </div>
             <input
               type="range"
               min="0.2"
-              max="3.0"
+              max="2.5"
               step="0.05"
               value={config.speed}
               onChange={(e) => handleUpdate('speed', parseFloat(e.target.value))}
-              className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+              className="w-full h-1.5 bg-white/[0.1] rounded-lg appearance-none cursor-pointer accent-neon-cyan"
             />
           </div>
 
-          {/* Slider 3: Particle Density */}
-          <div className="mb-3">
-            <div className="flex justify-between text-[11px] font-mono mb-1">
-              <span className="text-clinical-dim">PARTICLE FLUX:</span>
-              <span className="text-neon-cyan font-bold">{(config.particleDensity * 100).toFixed(0)}%</span>
+          {/* Slider 3: Densidad de Partículas */}
+          <div className="mb-3.5">
+            <div className="flex justify-between text-xs mb-1 font-body">
+              <span className="text-slate-300">Densidad de trazadores:</span>
+              <span className="text-neon-cyan font-mono font-bold">{(config.particleDensity * 100).toFixed(0)}%</span>
             </div>
             <input
               type="range"
               min="0.4"
-              max="1.8"
+              max="1.6"
               step="0.1"
               value={config.particleDensity}
               onChange={(e) => handleUpdate('particleDensity', parseFloat(e.target.value))}
-              className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+              className="w-full h-1.5 bg-white/[0.1] rounded-lg appearance-none cursor-pointer accent-neon-cyan"
             />
           </div>
 
-          {/* Slider 4: Bloom Radiance */}
+          {/* Slider 4: Resplandor Fotónico */}
           <div className="mb-4">
-            <div className="flex justify-between text-[11px] font-mono mb-1">
-              <span className="text-clinical-dim">PHOTON RADIANCE:</span>
-              <span className="text-neon-cyan font-bold">{config.bloomIntensity.toFixed(2)}</span>
+            <div className="flex justify-between text-xs mb-1 font-body">
+              <span className="text-slate-300">Emisión fotónica:</span>
+              <span className="text-neon-cyan font-mono font-bold">{config.bloomIntensity.toFixed(2)}</span>
             </div>
             <input
               type="range"
               min="0.6"
-              max="3.0"
+              max="2.6"
               step="0.1"
               value={config.bloomIntensity}
               onChange={(e) => handleUpdate('bloomIntensity', parseFloat(e.target.value))}
-              className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+              className="w-full h-1.5 bg-white/[0.1] rounded-lg appearance-none cursor-pointer accent-neon-cyan"
             />
           </div>
 
-          {/* Wireframe Mode Toggle */}
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-xs font-mono text-clinical-dim">
+          {/* Modo Malla Estructural */}
+          <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-xs font-body text-slate-300">
               <Layers className="w-3.5 h-3.5 text-neon-cyan" />
-              <span>WIREFRAME MESH</span>
+              <span>Modo Estructura Cristalina</span>
             </div>
             <button
               onClick={() => handleUpdate('wireframe', !config.wireframe)}
               onMouseEnter={() => soundEngine.playHover()}
-              className={`px-3 py-1 rounded text-[11px] font-mono font-bold transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-body font-semibold transition-all cursor-pointer ${
                 config.wireframe
-                  ? 'bg-neon-cyan text-cyber-950 shadow-[0_0_12px_#00F5D4]'
-                  : 'backdrop-blur-md bg-white/5 border border-white/10 text-clinical-dim hover:border-neon-cyan/50 hover:bg-white/10'
+                  ? 'bg-neon-cyan text-slate-950 shadow-sm'
+                  : 'bg-white/[0.05] border border-white/[0.1] text-slate-300 hover:bg-white/[0.1]'
               }`}
             >
-              {config.wireframe ? 'ACTIVE' : 'INACTIVE'}
+              {config.wireframe ? 'Activado' : 'Desactivado'}
             </button>
           </div>
         </div>
       )}
 
-      {/* Trigger Toggle Button */}
+      {/* Botón Flotante Limpio */}
       <button
         onClick={() => {
           soundEngine.playClick();
           setIsOpen(!isOpen);
         }}
         onMouseEnter={() => soundEngine.playHover()}
-        className={`p-3.5 rounded-full border transition-all duration-300 backdrop-blur-md flex items-center justify-center ${
+        className={`p-4 rounded-2xl border transition-all duration-300 backdrop-blur-xl flex items-center justify-center cursor-pointer shadow-lg ${
           isOpen
-            ? 'bg-neon-cyan text-cyber-950 border-neon-cyan shadow-[0_0_20px_rgba(0,245,212,0.6)]'
-            : 'bg-white/5 text-neon-cyan border-white/10 hover:border-neon-cyan hover:bg-white/10 hover:shadow-[0_0_15px_rgba(0,245,212,0.3)]'
+            ? 'bg-neon-cyan text-slate-950 border-neon-cyan shadow-[0_0_25px_rgba(0,212,178,0.5)]'
+            : 'bg-white/[0.06] text-white border-white/[0.15] hover:border-cyan-400/50 hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(0,212,178,0.25)]'
         }`}
-        title="Open 3D Diagnostics & Sandbox"
+        title="Configurar Emisión 3D"
       >
-        <Sliders className="w-5 h-5 animate-pulse" />
+        <Sliders className="w-5 h-5" />
       </button>
     </div>
   );

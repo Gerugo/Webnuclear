@@ -29,27 +29,26 @@ export const App: React.FC = () => {
   return (
     <div className="relative min-h-screen bg-cyber-950 text-clinical-text selection:bg-neon-cyan/20 selection:text-neon-cyan overflow-x-hidden font-body">
       
-      {/* 1. Capas Atmosféricas Cinemáticas (Scanlines CRT, Viñeta) */}
-      <div className="scanline-overlay" />
-      <div className="vignette-overlay" />
+      {/* 1. Iluminación Ambiental Médica Suave */}
+      <div className="ambient-glow-top" />
 
-      {/* 2. Fondo 3D Procedural (Canvas Fixed, inset-0, z-index: 0) */}
+      {/* 2. Fondo 3D Cuántico y Bio-energético (Canvas Fixed, inset-0, z-index: 0) */}
       <Background3D config={sandboxConfig} />
 
-      {/* 3. HUD Clínico Futurista & Barra de Navegación */}
+      {/* 3. Navegación Clínica Superior */}
       <Navbar onScrollTo={handleNavigate} scrollProgress={scrollProgress} />
       
-      {/* 4. Rastreador Vertical de Hitos Scrollytelling */}
+      {/* 4. Rastreador Vertical de Fases */}
       <ScrollyProgressHUD progress={scrollProgress} onSelectPhase={handleNavigate} />
 
-      {/* 5. Widget de Diagnósticos 3D Flotante & Ajuste de Shaders */}
+      {/* 5. Widget de Ajuste de Dosimetría y Shaders */}
       <DiagnosticsWidget config={sandboxConfig} onChange={setSandboxConfig} />
 
-      {/* 6. Secciones Narrativas con GSAP ScrollTrigger */}
+      {/* 6. Secciones Narrativas de Medicina Nuclear */}
       <main className="relative z-10 flex flex-col">
         <HeroSection 
           onExplore={() => handleNavigate('#genesis')} 
-          onOpenTerminal={() => handleNavigate('#terminal')} 
+          onOpenTerminal={() => handleNavigate('#sandbox')} 
         />
         <GenesisSection />
         <SynthesisSection />
