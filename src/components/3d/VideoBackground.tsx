@@ -13,7 +13,6 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Estado interno del motor
     let targetTime = 0;
     let currentTime = 0;
     let videoDuration = 0;
@@ -21,20 +20,22 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
     let isReady = false;
 
     const onReady = () => {
-      if (video.duration && !isNaN(video.duration) && video.readyState >= 3) {
+      if (video.duration && !isNaN(video.duration)) {
         videoDuration = video.duration;
         isReady = true;
         video.pause();
       }
     };
 
+    video.addEventListener('loadedmetadata', onReady);
     video.addEventListener('loadeddata', onReady);
     video.addEventListener('canplay', onReady);
 
-    // — Motor Principal de Sincronización —
-    // Lee el scroll nativo en tiempo real y mapea directamente a tiempo de video.
-    // Usa LERP de alta respuesta para que el movimiento se sienta suave y continuo
-    // sin los saltos propios del seeking por keyframes.
+    if (video.readyState >= 1) {
+      onReady();
+    }
+
+    // Motor de Sincronización Directa de Alta Precisión (All-Intra I-Frames)
     const tick = () => {
       const scrollY = window.scrollY;
       const maxScroll = Math.max(
@@ -43,22 +44,17 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
       );
 
       if (isReady && videoDuration > 0) {
-        // 1. Calcular objetivo de tiempo según posición de scroll
+        // Progreso de scroll normalizado de 0 a 1
         const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
         targetTime = progress * videoDuration;
 
-        // 2. Calcular diferencia: positiva = el usuario bajó, negativa = subió
+        // LERP suave y reactivo a 60/120 FPS
         const delta = targetTime - currentTime;
+        currentTime += delta * 0.22;
 
-        // 3. LERP de alta respuesta: 0.18 = fluido, sin tirones, respuesta casi instantánea
-        currentTime += delta * 0.18;
+        const clampedTime = Math.min(videoDuration - 0.005, Math.max(0.001, currentTime));
 
-        // 4. Clamp a los límites del video
-        const clampedTime = Math.min(videoDuration - 0.01, Math.max(0, currentTime));
-
-        // 5. Solo actualizamos currentTime si hay diferencia apreciable
-        //    (evita sobrescribir mientras el navegador decodifica el mismo fotograma)
-        if (Math.abs(video.currentTime - clampedTime) > 0.02) {
+        if (Math.abs(video.currentTime - clampedTime) > 0.005) {
           video.currentTime = clampedTime;
         }
       }
@@ -70,6 +66,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      video.removeEventListener('loadedmetadata', onReady);
       video.removeEventListener('loadeddata', onReady);
       video.removeEventListener('canplay', onReady);
     };
@@ -77,7 +74,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      {/* Video — siempre pausado, controlado 100% por currentTime */}
+      {/* Video All-Intra (I-Frame en cada fotograma) para scrubbing instantáneo */}
       <video
         ref={videoRef}
         src={dnaVideoUrl}
