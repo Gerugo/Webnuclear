@@ -7,103 +7,154 @@ interface VideoBackgroundProps {
 }
 
 export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const isSeekingRef = useRef<boolean>(false);
-  const pendingTimeRef = useRef<number | null>(null);
-  const targetTimeRef = useRef<number>(0);
+  const framesRef = useRef<ImageBitmap[]>([]);
+  const currentFrameRef = useRef<number>(0);
+  const targetFrameRef = useRef<number>(0);
 
   useEffect(() => {
+    const canvas = canvasRef.current;
     const video = videoRef.current;
-    if (!video) return;
+    if (!canvas || !video) return;
 
-    // Función de búsqueda segura que no satura el decodificador de video
-    const performSeek = (time: number) => {
-      if (!video || !video.duration || isNaN(video.duration)) return;
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    if (!ctx) return;
 
-      const clamped = Math.min(video.duration - 0.02, Math.max(0.001, time));
+    // Ajusta la resolución del canvas a la pantalla con retina display support
+    const handleResize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
 
-      if (isSeekingRef.current) {
-        // Si el decodificador está ocupado procesando el fotograma anterior, guardamos el último objetivo
-        pendingTimeRef.current = clamped;
-        return;
-      }
+    const totalFramesToExtract = 120; // 120 fotogramas para ultra-alta fidelidad y suavidad
+    const extractedFrames: ImageBitmap[] = [];
 
-      // Marcamos como ocupado hasta que el navegador termine de decodificar el fotograma
-      isSeekingRef.current = true;
+    // Función que dibuja el fotograma actual en el canvas con ajuste de cobertura (object-fit: cover)
+    const drawCover = (imageSource: CanvasImageSource) => {
+      if (!ctx || !canvas) return;
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const imgW = (imageSource as ImageBitmap).width || (imageSource as HTMLVideoElement).videoWidth || cw;
+      const imgH = (imageSource as ImageBitmap).height || (imageSource as HTMLVideoElement).videoHeight || ch;
 
-      if ('fastSeek' in video && typeof (video as unknown as { fastSeek: (t: number) => void }).fastSeek === 'function') {
-        try {
-          (video as unknown as { fastSeek: (t: number) => void }).fastSeek(clamped);
-        } catch {
-          video.currentTime = clamped;
-        }
-      } else {
-        video.currentTime = clamped;
-      }
+      const scale = Math.max(cw / imgW, ch / imgH);
+      const nw = imgW * scale;
+      const nh = imgH * scale;
+      const ox = (cw - nw) / 2;
+      const oy = (ch - nh) / 2;
+
+      ctx.drawImage(imageSource, ox, oy, nw, nh);
     };
 
-    // Callback disparado inmediatamente cuando el fotograma termina de renderizarse
-    const onSeeked = () => {
-      isSeekingRef.current = false;
-      if (pendingTimeRef.current !== null) {
-        const next = pendingTimeRef.current;
-        pendingTimeRef.current = null;
-        performSeek(next);
+    // Pre-decodificador de fotogramas en memoria (Apple Canvas Technique)
+    const extractAllFrames = async () => {
+      if (!video.duration || isNaN(video.duration)) return;
+
+      const step = video.duration / totalFramesToExtract;
+      const offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.width = 1280; // Resolución optimizada para GPU
+      offscreenCanvas.height = 720;
+      const offCtx = offscreenCanvas.getContext('2d');
+      if (!offCtx) return;
+
+      for (let i = 0; i < totalFramesToExtract; i++) {
+        const time = i * step;
+        await new Promise<void>((resolve) => {
+          const onSeek = async () => {
+            video.removeEventListener('seeked', onSeek);
+            try {
+              offCtx.drawImage(video, 0, 0, 1280, 720);
+              const bitmap = await createImageBitmap(offscreenCanvas);
+              extractedFrames[i] = bitmap;
+              if (i === 0) {
+                drawCover(bitmap);
+              }
+            } catch {
+              // Fallback
+            }
+            resolve();
+          };
+          video.addEventListener('seeked', onSeek);
+          video.currentTime = Math.min(video.duration - 0.01, time);
+        });
       }
+
+      framesRef.current = extractedFrames;
     };
 
     const onLoadedMetadata = () => {
       video.pause();
-      performSeek(0.001);
+      extractAllFrames();
     };
 
-    video.addEventListener('seeked', onSeeked);
     video.addEventListener('loadedmetadata', onLoadedMetadata);
 
     let animationFrameId: number;
 
-    // Bucle continuo a 60/120 FPS que consulta el progreso de scroll en tiempo real
-    const checkScrollProgress = () => {
-      if (video && video.duration && !isNaN(video.duration)) {
-        const p = Math.min(1, Math.max(0, global3DState.progress));
-        const target = p * video.duration;
+    // Bucle de renderizado continuo a 60/120 FPS que interpola fotogramas sin salto
+    const renderLoop = () => {
+      const p = Math.min(1, Math.max(0, global3DState.progress));
+      const total = framesRef.current.length || totalFramesToExtract;
+      targetFrameRef.current = p * (total - 1);
 
-        // Si el usuario se ha desplazado (hacia arriba o hacia abajo), solicitamos el nuevo fotograma
-        if (Math.abs(target - targetTimeRef.current) > 0.01) {
-          targetTimeRef.current = target;
-          performSeek(target);
-        }
+      // Suavizado cinemático LERP entre fotogramas para eliminar tirones al cambiar de dirección
+      const diff = targetFrameRef.current - currentFrameRef.current;
+      if (Math.abs(diff) > 0.01) {
+        currentFrameRef.current += diff * 0.25; // Respuesta inmediata
       }
-      animationFrameId = requestAnimationFrame(checkScrollProgress);
+
+      const frameIdx = Math.min(
+        (framesRef.current.length || 1) - 1,
+        Math.max(0, Math.round(currentFrameRef.current))
+      );
+
+      // Si los fotogramas en memoria están listos, renderizamos desde RAM (0ms de latencia)
+      if (framesRef.current[frameIdx]) {
+        drawCover(framesRef.current[frameIdx]);
+      } else if (video.readyState >= 2) {
+        drawCover(video);
+      }
+
+      animationFrameId = requestAnimationFrame(renderLoop);
     };
 
-    animationFrameId = requestAnimationFrame(checkScrollProgress);
+    animationFrameId = requestAnimationFrame(renderLoop);
 
     return () => {
-      video.removeEventListener('seeked', onSeeked);
+      window.removeEventListener('resize', handleResize);
       video.removeEventListener('loadedmetadata', onLoadedMetadata);
       cancelAnimationFrame(animationFrameId);
+      framesRef.current.forEach((b) => b.close && b.close());
     };
   }, []);
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      {/* 1. Video con decodificación continua por hardware */}
+      {/* 1. Canvas 2D de Ultra-Alta Velocidad (120 FPS sin parones ni saltos de decodificación) */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full object-cover will-change-transform"
+        style={{
+          opacity: 0.90,
+          filter: 'contrast(102%) brightness(101%) saturate(106%)',
+        }}
+      />
+
+      {/* 2. Video invisible para decodificación en memoria */}
       <video
         ref={videoRef}
         src={dnaVideoUrl}
         playsInline
         muted
         preload="auto"
-        className="absolute inset-0 w-full h-full object-cover will-change-transform"
-        style={{
-          opacity: 0.90,
-          filter: 'contrast(102%) brightness(101%) saturate(106%)',
-          transform: 'translateZ(0)',
-        }}
+        className="hidden"
       />
 
-      {/* 2. Capa de Integración Translúcida Estilo Apple */}
+      {/* 3. Capa Translúcida de Integración Óptica Estilo Apple */}
       <div 
         className="absolute inset-0 transition-all duration-300"
         style={{
@@ -111,7 +162,7 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
         }}
       />
 
-      {/* 3. Luces Difusas de Ambiente */}
+      {/* 4. Resplandores Sutiles de Luz Ambiental */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-[#0071E3]/[0.05] via-teal-500/[0.03] to-transparent rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[450px] bg-gradient-to-t from-blue-500/[0.04] to-transparent rounded-full blur-3xl pointer-events-none" />
     </div>
