@@ -65,6 +65,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollTo }) => {
             Áreas Clínicas
           </button>
           <button
+            onClick={() => { soundEngine.playClick(); onScrollTo('#calculadora'); }}
+            className="hover:text-[#1D1D1F] transition-colors py-1 cursor-pointer font-medium text-[#0071E3] hover:text-[#0077ED]"
+          >
+            Calculadora
+          </button>
+          <button
             onClick={() => { soundEngine.playClick(); onScrollTo('#contacto'); }}
             className="hover:text-[#1D1D1F] transition-colors py-1 cursor-pointer"
           >
