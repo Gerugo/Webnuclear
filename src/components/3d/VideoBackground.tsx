@@ -74,27 +74,31 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      {/* Video All-Intra (I-Frame en cada fotograma) para scrubbing instantáneo */}
-      <video
-        ref={videoRef}
-        src={dnaVideoUrl}
-        playsInline
-        muted
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{
-          opacity: 0.90,
-          filter: 'contrast(102%) brightness(101%) saturate(106%)',
-          willChange: 'contents',
-        }}
-      />
+      {/* Video All-Intra con encuadre óptico y bordes difusos para evitar ampliaciones distorsionadas */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <video
+          ref={videoRef}
+          src={dnaVideoUrl}
+          playsInline
+          muted
+          preload="auto"
+          className="h-full w-full object-contain max-w-5xl mx-auto"
+          style={{
+            opacity: 0.88,
+            filter: 'contrast(104%) brightness(101%) saturate(108%)',
+            maskImage: 'radial-gradient(ellipse 75% 75% at 50% 50%, black 50%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 75% 75% at 50% 50%, black 50%, transparent 100%)',
+            willChange: 'contents',
+          }}
+        />
+      </div>
 
       {/* Capa de integración visual estilo Apple */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 40%, rgba(251,251,253,0.40) 0%, rgba(251,251,253,0.74) 72%, rgba(245,245,247,0.90) 100%)',
+            'radial-gradient(ellipse at 50% 40%, rgba(251,251,253,0.30) 0%, rgba(251,251,253,0.68) 70%, rgba(245,245,247,0.92) 100%)',
         }}
       />
 
