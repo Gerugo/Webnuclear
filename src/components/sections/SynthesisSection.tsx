@@ -72,7 +72,7 @@ export const SynthesisSection: React.FC = () => {
       halfLife: '109.7 min',
       currentActivity: `${f18Activity}%`,
       progressVal: f18Activity,
-      status: 'En ruta hospitalaria',
+      status: 'En ruta hacia centros PET (Lima)',
     },
     {
       code: '⁶⁸Ga',
@@ -81,7 +81,7 @@ export const SynthesisSection: React.FC = () => {
       halfLife: '67.7 min',
       currentActivity: `${ga68Activity}%`,
       progressVal: ga68Activity,
-      status: 'Calibración final',
+      status: 'Control de calidad y elución',
     },
     {
       code: '¹⁷⁷Lu',
@@ -90,7 +90,7 @@ export const SynthesisSection: React.FC = () => {
       halfLife: '6.65 días',
       currentActivity: `${lu177Activity}%`,
       progressVal: lu177Activity,
-      status: 'Dosis preparada',
+      status: 'Dosis teranóstica lista para infusión',
     },
   ];
 
@@ -118,14 +118,15 @@ export const SynthesisSection: React.FC = () => {
         {/* Tarjeta Destacada de Tiempo Real */}
         <div className="synthesis-card p-8 sm:p-10 rounded-3xl bg-white/80 backdrop-blur-2xl border border-black/5 shadow-sm mb-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <div className="text-xs font-semibold text-[#86868B] uppercase tracking-wider mb-1">
-              Ventana de Entrega Activa
+            <div className="text-xs font-semibold text-[#0071E3] uppercase tracking-wider mb-1 flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#34C759] animate-pulse"></span>
+              <span>Despacho Activo • Hub Callao / Jorge Chávez</span>
             </div>
             <h3 className="font-display font-semibold text-2xl sm:text-3xl text-[#1D1D1F] tracking-tight">
-              Hospital Universitario Central
+              Red Hospitalaria y Oncológica de Lima
             </h3>
             <p className="text-sm text-[#515154] mt-1">
-              Lote #F18-8492 en contenedor blindado de temperatura controlada (4.2 °C).
+              Lote #F18-PE94 en contenedor blindado Tipo A (4.2 °C) con telemetría en ruta hacia INEN y clínicas asociadas.
             </p>
           </div>
 
@@ -134,7 +135,7 @@ export const SynthesisSection: React.FC = () => {
               {formatTime(transitSeconds)}
             </div>
             <div className="text-xs text-[#86868B] mt-1 font-medium">
-              Tiempo estimado de llegada
+              Tiempo estimado de entrega en destino
             </div>
           </div>
         </div>

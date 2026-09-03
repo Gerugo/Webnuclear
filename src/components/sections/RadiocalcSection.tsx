@@ -1,23 +1,32 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Sparkles, Clock, ArrowRight, Table } from 'lucide-react';
 import { soundEngine } from '../../audio/soundSynth';
 
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Datos clínicos de radiofármacos (fuente: IAEA / Farmacopea Europea) ───────
-const RADIOPHARMACEUTICALS = [
-  { id: 'fdg',         name: '¹⁸F-FDG',            fullName: 'Fluorodesoxiglucosa',           halfLifeMin: 109.8,   use: 'Oncología PET', color: '#0071E3' },
-  { id: 'ga68-psma',  name: '⁶⁸Ga-PSMA-11',        fullName: 'PSMA Diagnóstico Prostático',   halfLifeMin: 67.7,    use: 'Urología PET', color: '#30B0C7' },
-  { id: 'ga68-dota',  name: '⁶⁸Ga-DOTATATE',       fullName: 'DOTATATE Neuroendocrino',       halfLifeMin: 67.7,    use: 'NETs PET', color: '#5856D6' },
-  { id: 'lu177-psma', name: '¹⁷⁷Lu-PSMA-617',      fullName: 'PSMA Terapia Radioligandos',    halfLifeMin: 9576,    use: 'Terapia Próstata', color: '#34C759' },
-  { id: 'lu177-dota', name: '¹⁷⁷Lu-DOTA-TATE',     fullName: 'DOTA-TATE Terapia NETs',       halfLifeMin: 9576,    use: 'Terapia NETs', color: '#059669' },
-  { id: 'tc99m-maa',  name: '⁹⁹ᵐTc-MAA',           fullName: 'MAA Macro Agregados Albúmina', halfLifeMin: 360.6,   use: 'SPECT Pulmón', color: '#FF9500' },
-  { id: 'tc99m-mibi', name: '⁹⁹ᵐTc-MIBI',          fullName: 'MIBI Cardíaco Isonitrilo',     halfLifeMin: 360.6,   use: 'SPECT Cardíaco', color: '#FF6B35' },
-  { id: 'i123',       name: '¹²³I-DaTscan',         fullName: 'DaTscan Dopaminérgico',        halfLifeMin: 786,     use: 'Neurología SPECT', color: '#AF52DE' },
+export const RADIOPHARMACEUTICALS = [
+  { id: 'fdg',         name: '¹⁸F-FDG',            fullName: 'Fluorodesoxiglucosa',           halfLifeMin: 109.8,   use: 'Oncología PET', color: '#0071E3', standardDoseMCi: 10 },
+  { id: 'ga68-psma',  name: '⁶⁸Ga-PSMA-11',        fullName: 'PSMA Diagnóstico Prostático',   halfLifeMin: 67.7,    use: 'Urología PET', color: '#30B0C7', standardDoseMCi: 4 },
+  { id: 'ga68-dota',  name: '⁶⁸Ga-DOTATATE',       fullName: 'DOTATATE Neuroendocrino',       halfLifeMin: 67.7,    use: 'NETs PET', color: '#5856D6', standardDoseMCi: 5 },
+  { id: 'lu177-psma', name: '¹⁷⁷Lu-PSMA-617',      fullName: 'PSMA Terapia Radioligandos',    halfLifeMin: 9576,    use: 'Terapia Próstata', color: '#34C759', standardDoseMCi: 200 },
+  { id: 'lu177-dota', name: '¹⁷⁷Lu-DOTA-TATE',     fullName: 'DOTA-TATE Terapia NETs',       halfLifeMin: 9576,    use: 'Terapia NETs', color: '#059669', standardDoseMCi: 200 },
+  { id: 'tc99m-maa',  name: '⁹⁹ᵐTc-MAA',           fullName: 'MAA Macro Agregados Albúmina', halfLifeMin: 360.6,   use: 'SPECT Pulmón', color: '#FF9500', standardDoseMCi: 5 },
+  { id: 'tc99m-mibi', name: '⁹⁹ᵐTc-MIBI',          fullName: 'MIBI Cardíaco Isonitrilo',     halfLifeMin: 360.6,   use: 'SPECT Cardíaco', color: '#FF6B35', standardDoseMCi: 25 },
+  { id: 'i123',       name: '¹²³I-DaTscan',         fullName: 'DaTscan Dopaminérgico',        halfLifeMin: 786,     use: 'Neurología SPECT', color: '#AF52DE', standardDoseMCi: 5 },
 ] as const;
 
-type RadioId = typeof RADIOPHARMACEUTICALS[number]['id'];
+export type RadioId = typeof RADIOPHARMACEUTICALS[number]['id'];
+
+// ─── Presets Clínicos Hospitalarios Frecuentes ──────────────────────────────
+const CLINICAL_PRESETS = [
+  { label: 'PET-CT Oncológico', sub: '1 Paciente (10 mCi)', id: 'fdg' as RadioId, mCi: 10, hoursAhead: 3 },
+  { label: 'PET Próstata PSMA', sub: '1 Paciente (4 mCi)', id: 'ga68-psma' as RadioId, mCi: 4, hoursAhead: 2 },
+  { label: 'Terapia Teranóstica', sub: 'Dosis Lu-177 (200 mCi)', id: 'lu177-dota' as RadioId, mCi: 200, hoursAhead: 24 },
+  { label: 'SPECT Cardíaco MIBI', sub: 'Estrés/Reposo (25 mCi)', id: 'tc99m-mibi' as RadioId, mCi: 25, hoursAhead: 4 },
+];
 
 // ─── Fórmula de decaimiento radiactivo: A(t) = A₀ × 2^(-t / T½) ─────────────
 const decay = (a0: number, elapsedMin: number, halfLifeMin: number): number =>
@@ -53,7 +62,21 @@ const buildDecayCurve = (
   return pts.join(' ');
 };
 
-export const RadiocalcSection: React.FC = () => {
+export interface OrderPayload {
+  radioName: string;
+  radioId: string;
+  mCi: number;
+  remainingMCi: number;
+  calibDate: string;
+  adminDate: string;
+  note: string;
+}
+
+interface RadiocalcSectionProps {
+  onRequestOrder?: (order: OrderPayload) => void;
+}
+
+export const RadiocalcSection: React.FC<RadiocalcSectionProps> = ({ onRequestOrder }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   // ─── Estado del formulario ─────────────────────────────────────────────────
@@ -79,10 +102,9 @@ export const RadiocalcSection: React.FC = () => {
   const decayPct = isValid ? ((a0 - activityAtAdmin) / a0) * 100 : 0;
   const halfLivesElapsed = isValid ? elapsed / radio.halfLifeMin : 0;
 
-  // ─── Ventana Óptima: cuándo pedir para recibir X mCi ─────────────────────
+  // ─── Ventana Óptima ────────────────────────────────────────────────────────
   const targetMCi = activityAtAdmin > 0 ? activityAtAdmin : a0 * 0.8;
-  // t_optimo = T½ × log2(a0 / targetMCi)
-  const optimalLeadMin = (radio.halfLifeMin * Math.log2(a0 / targetMCi));
+  const optimalLeadMin = radio.halfLifeMin * Math.log2(a0 / targetMCi);
   const optimalOrderTime = isValid
     ? new Date(new Date(adminDate).getTime() - optimalLeadMin * 60000)
     : null;
@@ -96,13 +118,20 @@ export const RadiocalcSection: React.FC = () => {
   };
   const status = getStatus(decayPct);
 
+  // ─── Proyección de Decaimiento por Horas para Agenda Hospitalaria ──────────
+  const hourlySteps = [1, 2, 3, 4, 6, 8];
+  const hourlyDecayTable = hourlySteps.map(hours => {
+    const min = hours * 60;
+    const act = decay(a0, min, radio.halfLifeMin);
+    const loss = ((a0 - act) / a0) * 100;
+    return { hours, act, loss };
+  });
+
   // ─── SVG Chart ──────────────────────────────────────────────────────────
   const W = 600, H = 180;
   const chartTotalMin = Math.max(radio.halfLifeMin * 5, elapsed * 1.2, 60);
   const curvePath = buildDecayCurve(a0, radio.halfLifeMin, chartTotalMin, W, H);
-  // Línea vertical de administración
   const adminX = isValid ? Math.min(W, (elapsed / chartTotalMin) * W) : 0;
-  // Línea horizontal de actividad restante
   const adminY = isValid ? H - (activityAtAdmin / a0) * H : H;
 
   // ─── Animación GSAP entrada ────────────────────────────────────────────────
@@ -125,6 +154,36 @@ export const RadiocalcSection: React.FC = () => {
     setSelectedId(id);
   }, []);
 
+  const handleApplyPreset = (preset: typeof CLINICAL_PRESETS[number]) => {
+    soundEngine.playScan();
+    setSelectedId(preset.id);
+    setActivityMCi(preset.mCi.toString());
+
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+    setCalibDate(now.toISOString().slice(0, 16));
+
+    const future = new Date(now.getTime() + preset.hoursAhead * 3600000);
+    setAdminDate(future.toISOString().slice(0, 16));
+  };
+
+  const handleSendToQuotation = () => {
+    soundEngine.playClick();
+    if (onRequestOrder && isValid) {
+      onRequestOrder({
+        radioName: radio.name,
+        radioId: radio.id,
+        mCi: a0,
+        remainingMCi: Number(activityAtAdmin.toFixed(2)),
+        calibDate,
+        adminDate,
+        note: `Cálculo de decaimiento: Se estiman ${activityAtAdmin.toFixed(2)} mCi útiles al momento de administración (${decayPct.toFixed(1)}% de decaimiento calculado para ${fmtHM(elapsed)} de tránsito).`,
+      });
+    }
+    const el = document.querySelector('#contacto');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section
       ref={sectionRef}
@@ -134,16 +193,41 @@ export const RadiocalcSection: React.FC = () => {
       <div className="max-w-5xl w-full mx-auto">
 
         {/* ── Encabezado ────────────────────────────────────────────── */}
-        <div className="calc-header text-center max-w-2xl mx-auto mb-16">
-          <div className="text-xs font-semibold text-[#0071E3] uppercase tracking-wider mb-2">
-            Herramienta Exclusiva
+        <div className="calc-header text-center max-w-2xl mx-auto mb-12">
+          <div className="text-xs font-semibold text-[#0071E3] uppercase tracking-wider mb-2 flex items-center justify-center space-x-2">
+            <Clock className="w-3.5 h-3.5" />
+            <span>Herramienta Clínica Exclusiva • Perú</span>
           </div>
           <h2 className="font-display font-semibold text-4xl sm:text-5xl text-[#1D1D1F] tracking-tight">
             Calculadora de Deterioro Radiofarmacéutico.
           </h2>
           <p className="text-[#86868B] text-base sm:text-lg mt-3 font-normal leading-relaxed">
-            Calcula la actividad residual de cada radiofármaco en el momento exacto de administración y encuentra la ventana óptima de pedido para minimizar pérdidas.
+            Planifica la actividad exacta requerida en el momento de inyección al paciente, optimiza tus pedidos hospitalarios y minimiza el descarte de material radiactivo.
           </p>
+        </div>
+
+        {/* ── Presets Clínicos Rápidos ──────────────────────────────── */}
+        <div className="calc-card mb-8">
+          <div className="text-xs font-semibold text-[#515154] uppercase tracking-wider mb-3 flex items-center space-x-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#0071E3]" />
+            <span>Plantillas Clínicas Frecuentes (Configuración con 1 Clic):</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {CLINICAL_PRESETS.map((preset, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleApplyPreset(preset)}
+                className="p-3.5 rounded-2xl bg-white/70 hover:bg-white border border-black/5 hover:border-[#0071E3]/30 hover:shadow-xs text-left transition-all cursor-pointer group"
+              >
+                <div className="text-xs font-semibold text-[#1D1D1F] group-hover:text-[#0071E3] transition-colors">
+                  {preset.label}
+                </div>
+                <div className="text-[11px] text-[#86868B]">
+                  {preset.sub}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ── Selector de Radiofármaco ──────────────────────────────── */}
@@ -176,7 +260,7 @@ export const RadiocalcSection: React.FC = () => {
             {/* Actividad inicial */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-[#515154] block">
-                Actividad en Calibración (mCi)
+                Actividad de Calibración Despachada (mCi)
               </label>
               <div className="relative">
                 <input
@@ -192,14 +276,14 @@ export const RadiocalcSection: React.FC = () => {
                 </span>
               </div>
               <div className="text-[10px] text-[#86868B]">
-                ≈ {(parseFloat(activityMCi) * 37).toFixed(0)} MBq
+                ≈ {(parseFloat(activityMCi) * 37 || 0).toFixed(0)} MBq
               </div>
             </div>
 
             {/* Fecha/hora de calibración */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-[#515154] block">
-                Fecha y Hora de Calibración
+                Fecha y Hora de Calibración (Origen)
               </label>
               <input
                 type="datetime-local"
@@ -212,7 +296,7 @@ export const RadiocalcSection: React.FC = () => {
             {/* Fecha/hora de administración */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-[#515154] block">
-                Fecha y Hora de Administración
+                Fecha y Hora de Administración al Paciente
               </label>
               <input
                 type="datetime-local"
@@ -233,7 +317,7 @@ export const RadiocalcSection: React.FC = () => {
               {/* Actividad al administrar */}
               <div className="p-6 rounded-3xl bg-white/80 border border-black/5 backdrop-blur-xl">
                 <div className="text-[10px] font-medium text-[#86868B] uppercase tracking-wider mb-1">
-                  Actividad en Administración
+                  Actividad Remanente Útil
                 </div>
                 <div className="text-2xl font-bold font-mono text-[#1D1D1F]">
                   {activityAtAdmin.toFixed(2)}
@@ -246,7 +330,7 @@ export const RadiocalcSection: React.FC = () => {
               {/* Deterioro */}
               <div className={`p-6 rounded-3xl border ${status.bg} border-black/5 backdrop-blur-xl`}>
                 <div className="text-[10px] font-medium text-[#86868B] uppercase tracking-wider mb-1">
-                  Deterioro Total
+                  Deterioro Radiactivo
                 </div>
                 <div className="text-2xl font-bold font-mono" style={{ color: status.color }}>
                   {decayPct.toFixed(1)}%
@@ -259,25 +343,25 @@ export const RadiocalcSection: React.FC = () => {
               {/* Tiempo transcurrido */}
               <div className="p-6 rounded-3xl bg-white/80 border border-black/5 backdrop-blur-xl">
                 <div className="text-[10px] font-medium text-[#86868B] uppercase tracking-wider mb-1">
-                  Tiempo Transcurrido
+                  Ventana de Tránsito
                 </div>
                 <div className="text-2xl font-bold font-mono text-[#1D1D1F]">
                   {fmtHM(elapsed)}
                 </div>
                 <div className="text-xs text-[#86868B] mt-0.5">
-                  {halfLivesElapsed.toFixed(1)} T½ transcurridas
+                  {halfLivesElapsed.toFixed(1)} vidas medias (T½)
                 </div>
               </div>
 
               {/* Vida media del producto */}
               <div className="p-6 rounded-3xl bg-white/80 border border-black/5 backdrop-blur-xl">
                 <div className="text-[10px] font-medium text-[#86868B] uppercase tracking-wider mb-1">
-                  Vida Media (T½)
+                  Vida Media Oficial (T½)
                 </div>
                 <div className="text-2xl font-bold font-mono text-[#1D1D1F]">
                   {fmtHM(radio.halfLifeMin)}
                 </div>
-                <div className="text-xs text-[#86868B] mt-0.5">
+                <div className="text-xs text-[#86868B] mt-0.5 truncate">
                   {radio.fullName}
                 </div>
               </div>
@@ -288,7 +372,7 @@ export const RadiocalcSection: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-xs font-semibold text-[#86868B] uppercase tracking-wider mb-0.5">
-                    Curva de Decaimiento Radiactivo
+                    Curva de Decaimiento Continuo
                   </div>
                   <div className="text-sm font-medium text-[#1D1D1F]">
                     {radio.name} — A(t) = A₀ · 2<sup>-t/T½</sup>
@@ -351,7 +435,7 @@ export const RadiocalcSection: React.FC = () => {
 
                   {/* Etiqueta del punto */}
                   <text
-                    x={Math.min(adminX + 12, W - 100)} y={adminY - 8}
+                    x={Math.min(adminX + 12, W - 120)} y={adminY - 8}
                     fontSize="10" fill={status.color} fontFamily="monospace" fontWeight="bold"
                   >
                     {activityAtAdmin.toFixed(2)} mCi ({(100 - decayPct).toFixed(0)}%)
@@ -371,45 +455,59 @@ export const RadiocalcSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Recomendación de Ventana Óptima de Pedido */}
+            {/* Tabla de Proyección de Actividad Horaria */}
+            <div className="calc-card p-6 sm:p-8 rounded-3xl bg-white/75 backdrop-blur-2xl border border-black/5 shadow-2xs mb-6">
+              <div className="flex items-center space-x-2 text-xs font-semibold text-[#1D1D1F] uppercase tracking-wider mb-4">
+                <Table className="w-4 h-4 text-[#0071E3]" />
+                <span>Tabla de Proyección Horaria para Coordinación de Pacientes</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center font-mono">
+                {hourlyDecayTable.map((col, idx) => (
+                  <div key={idx} className="p-3 rounded-2xl bg-black/2 border border-black/4">
+                    <div className="text-[11px] text-[#86868B] font-body mb-1">+{col.hours}h post-calib</div>
+                    <div className="text-base font-bold text-[#1D1D1F]">{col.act.toFixed(2)} <span className="text-[10px] font-normal text-[#86868B]">mCi</span></div>
+                    <div className="text-[10px] text-[#FF6B35] font-semibold mt-0.5">-{col.loss.toFixed(0)}%</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recomendación de Ventana Óptima de Pedido y Puente de Cotización */}
             <div className="calc-card p-8 rounded-3xl bg-[#0071E3]/5 border border-[#0071E3]/15 backdrop-blur-xl">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
                   <div className="text-xs font-semibold text-[#0071E3] uppercase tracking-wider mb-1">
-                    Recomendación de Pedido Óptimo
+                    Ventana Logística Óptima en Perú
                   </div>
                   <h3 className="font-display font-semibold text-xl text-[#1D1D1F] tracking-tight mb-1">
-                    Para recibir {activityAtAdmin.toFixed(1)} mCi en el momento de uso,
-                    <br className="hidden sm:block" />
-                    {' '}el pedido debe realizarse con{' '}
-                    <span className="text-[#0071E3]">{fmtHM(optimalLeadMin)}</span> de antelación.
+                    Para disponer de {activityAtAdmin.toFixed(2)} mCi exactos en el paciente:
                   </h3>
-                  <p className="text-sm text-[#515154]">
-                    Solicita la dosis para que llegue a las{' '}
+                  <p className="text-sm text-[#515154] leading-relaxed">
+                    El lote debe ser despachado con <strong className="text-[#0071E3]">{fmtHM(optimalLeadMin)}</strong> de anticipación desde el Callao Hub para llegar a destino a las{' '}
                     <strong className="text-[#1D1D1F]">
                       {optimalOrderTime?.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
                     </strong>{' '}
                     del{' '}
                     <strong className="text-[#1D1D1F]">
                       {optimalOrderTime?.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' })}
-                    </strong>
-                    .
+                    </strong>.
                   </p>
                 </div>
 
                 <button
-                  onClick={() => { soundEngine.playClick(); document.querySelector('#contacto')?.scrollIntoView({ behavior: 'smooth' }); }}
-                  className="px-6 py-3 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-medium text-sm shrink-0 transition-all hover:scale-[1.02] cursor-pointer"
+                  onClick={handleSendToQuotation}
+                  className="px-6 py-3.5 rounded-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-medium text-sm shrink-0 transition-all hover:scale-[1.02] shadow-sm flex items-center justify-center space-x-2 cursor-pointer"
                 >
-                  Solicitar este Pedido
+                  <span>Solicitar Cotización de este Pedido</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Barra de deterioro visual */}
+              {/* Barra de retención */}
               <div className="mt-6 pt-5 border-t border-[#0071E3]/10">
                 <div className="flex justify-between text-[10px] text-[#86868B] mb-1.5">
-                  <span>Actividad disponible al momento de uso</span>
-                  <span>{(100 - decayPct).toFixed(1)}% retenida</span>
+                  <span>Actividad disponible en la jeringa / inyector</span>
+                  <span>{(100 - decayPct).toFixed(1)}% de dosis retenida</span>
                 </div>
                 <div className="w-full h-2 bg-black/5 rounded-full overflow-hidden">
                   <div
@@ -428,7 +526,7 @@ export const RadiocalcSection: React.FC = () => {
         {/* Estado vacío / ayuda */}
         {!isValid && (
           <div className="calc-card p-10 rounded-3xl bg-white/60 border border-black/5 text-center text-[#86868B] text-sm">
-            Selecciona un radiofármaco, introduce la actividad inicial y las fechas de calibración y administración para calcular el deterioro.
+            Selecciona un radiofármaco o aplica una plantilla clínica superior para simular el decaimiento.
           </div>
         )}
 
