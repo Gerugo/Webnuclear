@@ -93,12 +93,12 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = () => {
         />
       </div>
 
-      {/* Capa de integración visual luminosa con fondo #EDEEF5 */}
+      {/* Capa de integración visual estilo Apple */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 40%, rgba(237,238,245,0.30) 0%, rgba(237,238,245,0.70) 70%, rgba(237,238,245,0.96) 100%)',
+            'radial-gradient(ellipse at 50% 40%, rgba(251,251,253,0.30) 0%, rgba(251,251,253,0.68) 70%, rgba(245,245,247,0.92) 100%)',
         }}
       />
 
