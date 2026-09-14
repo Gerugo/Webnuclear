@@ -32,7 +32,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#FBFBFD] text-[#1D1D1F] selection:bg-[#0071E3]/15 selection:text-[#0071E3] overflow-x-hidden font-body">
+    <div className="relative min-h-screen bg-[#EDEEF5] text-[#18181b] selection:bg-[#9fff00] selection:text-[#18181b] overflow-x-hidden font-inter">
       
       {/* 1. Fondo de Video Cinemático 60 FPS All-Intra */}
       <VideoBackground config={sandboxConfig} />

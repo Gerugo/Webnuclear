@@ -28,10 +28,13 @@
   --color-clinical-text: #1D1D1F;
   --color-clinical-dim: #515154;
   --color-clinical-muted: #86868B;
+  --color-lime: #9fff00;
+  --color-hero-bg: #EDEEF5;
+  --color-hero-text: #18181b;
 
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-display: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "SF Mono", "JetBrains Mono", monospace;
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 :root {
@@ -40,16 +43,24 @@
 
 html {
   scroll-behavior: auto;
-  background-color: #FBFBFD;
+  background-color: #EDEEF5;
 }
 
 body {
-  background-color: #FBFBFD;
-  color: #1D1D1F;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+  background-color: #EDEEF5;
+  color: #18181b;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-outfit {
+  font-family: "Outfit", sans-serif;
+}
+
+.font-inter {
+  font-family: "Inter", sans-serif;
 }
 
 /* Glassmorphism Minimalista Estilo Apple */
