@@ -14,9 +14,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollTo }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Aparece suavemente cuando nos acercamos a las secciones comerciales y clínicas
+      const partnersEl = document.querySelector('#partners');
+      if (partnersEl) {
+        const rect = partnersEl.getBoundingClientRect();
+        setIsScrolled(rect.top < window.innerHeight * 0.85);
+      } else {
+        setIsScrolled(window.scrollY > window.innerHeight * 2.5);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -32,7 +40,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollTo }) => {
   };
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none select-none">
+    <header className={`fixed top-4 left-0 right-0 z-50 flex justify-center px-4 transition-all duration-500 pointer-events-none select-none ${
+      isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
+    }`}>
       <div className="pointer-events-auto max-w-5xl w-full mx-auto relative">
         <div 
           className={`w-full px-5 py-2.5 rounded-full transition-all duration-300 flex items-center justify-between backdrop-blur-2xl ${
