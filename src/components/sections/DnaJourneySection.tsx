@@ -101,6 +101,7 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
   const [activeScene, setActiveScene] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [shellState, setShellState] = useState<'before' | 'fixed' | 'after'>('fixed');
   const currentVideoTime = useRef(0);
   const targetVideoTime = useRef(0);
   const rafId = useRef<number>(0);
@@ -117,6 +118,15 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
     const currentY = -rect.top;
     const progress = clamp(currentY / totalHeight, 0, 1);
     setScrollProgress(progress);
+
+    // Dynamic shell positioning: eliminates sticky overflow bugs
+    if (rect.top > 0) {
+      setShellState('before');
+    } else if (currentY >= totalHeight) {
+      setShellState('after');
+    } else {
+      setShellState('fixed');
+    }
 
     // Calculate active scene (0 to 4)
     const exactScene = progress * (medicalScenes.length - 1);
@@ -196,8 +206,16 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
     >
       <div id="genesis" className="absolute top-0 pointer-events-none" />
       <div id="dna-journey" className="absolute top-0 pointer-events-none" />
-      {/* ── STICKY SHELL: Locked full-screen viewport during the journey ── */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden isolate bg-[#F8FAFC]">
+      {/* ── IMMERSIVE SHELL: Locked full-screen viewport during the journey, releases cleanly at end ── */}
+      <div 
+        className={`left-0 w-full h-screen overflow-hidden isolate bg-[#F8FAFC] ${
+          shellState === 'fixed'
+            ? 'fixed top-0 z-20'
+            : shellState === 'after'
+            ? 'absolute bottom-0 z-10'
+            : 'absolute top-0 z-10'
+        }`}
+      >
         
         {/* 1. VIDEO 3D BACKGROUND A 60 FPS ALL-INTRA */}
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">

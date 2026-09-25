@@ -26,7 +26,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] text-[#1D1D1F] selection:bg-[#0071E3]/15 selection:text-[#0071E3] overflow-x-hidden font-body">
+    <div className="relative min-h-screen bg-[#F8FAFC] text-[#1D1D1F] selection:bg-[#0071E3]/15 selection:text-[#0071E3] overflow-x-clip font-body">
       
       {/* 1. Barra de Navegación Flotante con Soporte Móvil y Audio Toggle */}
       <Navbar onScrollTo={handleNavigate} scrollProgress={scrollProgress} />
