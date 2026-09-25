@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { soundEngine } from '../../audio/soundSynth';
 import { ChevronRight, ArrowDown, Activity, ShieldCheck, Zap, Crosshair, Sparkles } from 'lucide-react';
-import dnaVideoUrl from '../../assets/dna_background.mp4';
 
 export interface JourneyScene {
   id: string;
@@ -97,14 +96,9 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
   onExplorePartners,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [activeScene, setActiveScene] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [shellState, setShellState] = useState<'before' | 'fixed' | 'after'>('fixed');
-  const currentVideoTime = useRef(0);
-  const targetVideoTime = useRef(0);
-  const rafId = useRef<number>(0);
 
   // Smooth scroll handler
   const handleScroll = useCallback(() => {
@@ -135,49 +129,14 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
       Math.max(0, Math.round(exactScene))
     );
     setActiveScene(sceneIndex);
-
-    // Calculate target video scrubbing time
-    const video = videoRef.current;
-    if (video && Number.isFinite(video.duration) && video.duration > 0) {
-      targetVideoTime.current = progress * (video.duration - 0.05);
-    }
   }, []);
 
-  // Animation frame loop for glass-smooth video interpolation (Abhay Tiwari inertia technique)
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    let isRunning = true;
-
-    const updateLoop = () => {
-      if (!isRunning) return;
-
-      if (video && Number.isFinite(video.duration) && !video.seeking) {
-        // Linear interpolation with 0.18 easing factor for buttery response
-        const diff = targetVideoTime.current - currentVideoTime.current;
-        if (Math.abs(diff) > 0.005) {
-          currentVideoTime.current += diff * 0.18;
-          try {
-            video.currentTime = clamp(currentVideoTime.current, 0, video.duration - 0.02);
-          } catch {
-            // Safe fallback if browser busy seeking
-          }
-        }
-      }
-
-      rafId.current = requestAnimationFrame(updateLoop);
-    };
-
-    rafId.current = requestAnimationFrame(updateLoop);
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
     handleScroll();
 
     return () => {
-      isRunning = false;
-      cancelAnimationFrame(rafId.current);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -202,64 +161,42 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
       ref={containerRef}
       id="hero"
       className="relative w-full select-none"
-      style={{ height: `${medicalScenes.length * 105}vh` }}
+      style={{ height: '360vh' }}
     >
       <div id="genesis" className="absolute top-0 pointer-events-none" />
       <div id="dna-journey" className="absolute top-0 pointer-events-none" />
-      {/* ── IMMERSIVE SHELL: Locked full-screen viewport during the journey, releases cleanly at end ── */}
+      {/* ── IMMERSIVE SHELL: Transparent to allow global 3D DNA video to shine across the entire page ── */}
       <div 
-        className={`left-0 w-full h-screen overflow-hidden isolate bg-[#F8FAFC] ${
+        className={`left-0 w-full h-screen overflow-hidden isolate bg-transparent ${
           shellState === 'fixed'
-            ? 'fixed top-0 z-20'
+            ? 'fixed top-0 z-20 pointer-events-none'
             : shellState === 'after'
-            ? 'absolute bottom-0 z-10'
-            : 'absolute top-0 z-10'
+            ? 'absolute bottom-0 z-10 pointer-events-none'
+            : 'absolute top-0 z-10 pointer-events-none'
         }`}
       >
         
-        {/* 1. VIDEO 3D BACKGROUND A 60 FPS ALL-INTRA */}
-        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-          <video
-            ref={videoRef}
-            src={dnaVideoUrl}
-            playsInline
-            muted
-            preload="auto"
-            onLoadedData={() => setVideoLoaded(true)}
-            className="w-full h-full object-cover object-center scale-[1.02]"
-            style={{
-              opacity: 0.94,
-              filter: 'contrast(103%) brightness(101%) saturate(106%)',
-            }}
-          />
-        </div>
-
-        {/* 2. OPTICAL VIGNETTE & CONTRAST SHADE (Format Inspired by "The Way of the Leaf") */}
+        {/* 1. OPTICAL VIGNETTE & CONTRAST SHADE (Format Inspired by "The Way of the Leaf") */}
         <div 
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background: `
               linear-gradient(90deg, 
-                rgba(248, 250, 252, 0.96) 0%, 
-                rgba(248, 250, 252, 0.88) 36%, 
-                rgba(248, 250, 252, 0.40) 62%, 
-                rgba(248, 250, 252, 0.05) 85%
+                rgba(248, 250, 252, 0.94) 0%, 
+                rgba(248, 250, 252, 0.82) 38%, 
+                rgba(248, 250, 252, 0.25) 65%, 
+                transparent 85%
               ),
               linear-gradient(0deg, 
-                rgba(248, 250, 252, 0.70) 0%, 
+                rgba(248, 250, 252, 0.50) 0%, 
                 transparent 30%
-              ),
-              radial-gradient(ellipse at 75% 50%, 
-                transparent 0%, 
-                rgba(0, 113, 227, 0.04) 50%, 
-                transparent 100%
               )
             `,
           }}
         />
 
-        {/* 3. TOPBAR MINIMALISTA */}
-        <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-12 py-5 border-b border-black/[0.04] backdrop-blur-[6px] bg-white/30">
+        {/* 2. TOPBAR MINIMALISTA */}
+        <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-12 py-5 border-b border-black/[0.04] backdrop-blur-[6px] bg-white/30 pointer-events-auto">
           <div className="flex items-center space-x-3">
             <div className="w-2.5 h-2.5 rounded-full bg-[#0071E3] animate-pulse shadow-[0_0_12px_#0071E3]" />
             <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#1D1D1F]">
@@ -300,7 +237,7 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
               {medicalScenes[activeScene].label}
             </span>
             <span className="tracking-widest hidden sm:inline-block">
-              {videoLoaded ? 'SCROLL PARA AVANZAR' : 'CARGANDO FOTOGRAMAS...'}
+              SCROLL PARA AVANZAR
             </span>
           </div>
         </header>
@@ -418,9 +355,9 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
           </div>
         </div>
 
-        {/* 5. VERTICAL CHAPTER RAIL (Derecha - Formato exacto de The Way of the Leaf) */}
+        {/* 4. VERTICAL CHAPTER RAIL (Derecha - Formato exacto de The Way of the Leaf) */}
         <nav
-          className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center space-y-6"
+          className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center space-y-6 pointer-events-auto"
           aria-label="Capítulos de la travesía molecular"
         >
           {/* Línea vertical conductora */}
@@ -461,8 +398,8 @@ export const DnaJourneySection: React.FC<DnaJourneySectionProps> = ({
           })}
         </nav>
 
-        {/* 6. BOTTOM HUD FOOTER (Contador, Barra de Progreso y Mouse Indicator) */}
-        <footer className="absolute bottom-6 left-6 sm:left-12 right-6 sm:right-12 z-30 flex items-center justify-between text-[#86868B] text-xs font-mono select-none">
+        {/* 5. BOTTOM HUD FOOTER (Contador, Barra de Progreso y Mouse Indicator) */}
+        <footer className="absolute bottom-6 left-6 sm:left-12 right-6 sm:right-12 z-30 flex items-center justify-between text-[#86868B] text-xs font-mono select-none pointer-events-auto">
           
           {/* Animación del ratón con rueda deslizándose */}
           <div className="flex items-center space-x-3">

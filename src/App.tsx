@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useLenisScroll } from './hooks/useLenisScroll';
 import { Navbar } from './components/hud/Navbar';
+import { VideoBackground } from './components/3d/VideoBackground';
+import { defaultSandboxConfig } from './hooks/useScrollStore';
 import { DnaJourneySection } from './components/sections/DnaJourneySection';
 import { PartnersSection } from './components/sections/PartnersSection';
 import { SynthesisSection } from './components/sections/SynthesisSection';
@@ -26,34 +28,37 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] text-[#1D1D1F] selection:bg-[#0071E3]/15 selection:text-[#0071E3] overflow-x-clip font-body">
+    <div className="relative min-h-screen bg-transparent text-[#1D1D1F] selection:bg-[#0071E3]/15 selection:text-[#0071E3] overflow-x-clip font-body">
       
-      {/* 1. Barra de Navegación Flotante con Soporte Móvil y Audio Toggle */}
+      {/* 1. Fondo Global Cinemático 60 FPS Permanente en TODA la Web */}
+      <VideoBackground config={defaultSandboxConfig} />
+
+      {/* 2. Barra de Navegación Flotante con Soporte Móvil y Audio Toggle */}
       <Navbar onScrollTo={handleNavigate} scrollProgress={scrollProgress} />
 
-      {/* 2. Travesía Cinemática 3D por la Cadena de ADN (Formato Scrollytelling The Way of the Leaf) */}
+      {/* 3. Travesía Cinemática Scrollytelling (5 Capítulos Moleculares) y Secciones Clínicas */}
       <main className="relative z-10 flex flex-col">
         <DnaJourneySection
           onOpenCalculator={() => handleNavigate('#calculadora')}
           onExplorePartners={() => handleNavigate('#partners')}
         />
 
-        {/* 3. Alianzas Globales: Curium Pharma, Tema Sinergie, Mirion Technologies */}
+        {/* 4. Alianzas Globales: Curium Pharma, Tema Sinergie, Mirion Technologies */}
         <PartnersSection />
 
-        {/* 4. Logística Crítica Hub Callao / Aeropuerto Jorge Chávez */}
+        {/* 5. Logística Crítica Hub Callao / Aeropuerto Jorge Chávez */}
         <SynthesisSection />
 
-        {/* 5. Áreas Clínicas: Oncología, Neurología, Cardiología */}
+        {/* 6. Áreas Clínicas: Oncología, Neurología, Cardiología */}
         <DeepWarpSection />
 
-        {/* 6. Calculadora Clínica Interactiva de Decaimiento Radiofarmacéutico */}
+        {/* 7. Calculadora Clínica Interactiva de Decaimiento Radiofarmacéutico */}
         <RadiocalcSection onRequestOrder={handleRequestOrder} />
 
-        {/* 7. Formulario de Pedidos / Cotización Localizado en Perú */}
+        {/* 8. Formulario de Pedidos / Cotización Localizado en Perú */}
         <ContactTheranosticsSection initialOrder={pendingOrder} />
 
-        {/* 8. Footer Corporativo y Regulatorio IPEN / DIGEMID */}
+        {/* 9. Footer Corporativo y Regulatorio IPEN / DIGEMID */}
         <TerminalFooter onScrollTo={handleNavigate} />
       </main>
 
